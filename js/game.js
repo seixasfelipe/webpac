@@ -2,7 +2,6 @@ var game = {
 	
 	canvas: null,
 	context: null,
-	// bufferContext: null,
 	screenWidth: 640,
 	screenHeight: 480,
 	loop: null,
@@ -30,7 +29,6 @@ var game = {
 		this.canvas.height = this.screenHeight;
 
 		this.context = this.canvas.getContext('2d');
-		// this.bufferContext = this.canvas.getContext('2d');
 
 		this.context.fillStyle = 'red';
 		this.context.font = '10px Lucinda Grande, Lucida Sans Unicode, Verdana, sans-serif';
@@ -127,14 +125,12 @@ var game = {
 	draw: function() {
   		this.clearCanvas();
 
-  		console.log('drawing ' + this.objects.length + ' objects');
+  		// console.log('drawing ' + this.objects.length + ' objects');
   		for(var i=0; i<this.objects.length; i++) {
   			var obj = this.objects[i];
   			var objImage = obj.getImage();
 
   			this.context.fillText('('+obj.position.x+','+obj.position.y+')', obj.position.x-5, obj.position.y-5);
-  			// this.context.translate(obj.position.x, obj.position.y);
-    		// this.context.scale(-1, 1);
   			this.context.drawImage(this.spriteSheet, 
   				objImage.x, objImage.y, objImage.width, objImage.height, 
   				obj.position.x, obj.position.y, objImage.width, objImage.height);
@@ -142,14 +138,17 @@ var game = {
 	},
 	clearCanvas: function() {
 		this.context.clearRect(0, 0, this.screenWidth, this.screenHeight);
-		this.context.translate(0, 0);
-		this.context.scale(1,1);
+		// this.context.translate(0, 0);
+		// this.context.scale(1,1);
 		//this.canvas.width = this.canvas.width;
 	},
 	loadResources: function() {
+		console.log('loading resources.');
+
 		this.spriteSheet = new Image();
 		this.spriteSheet.src = 'images/pacman-sprites.png';
 
+		// TODO: create a resource factory.
 		var pacman = Object.create(Sprite);
 		pacman.position.x = 100;
 		pacman.position.y = 50;
@@ -179,6 +178,8 @@ var game = {
   		this.objects.push(pacman);
 	},
 	addEventListerners: function() {
+		console.log('adding event listerners.');
+
 		window.addEventListener('keydown', function(e) {
 			// ref: http://www.cambiaresearch.com/articles/15/javascript-char-codes-key-codes
 			console.log('key hit ' + String.fromCharCode(e.keyCode));

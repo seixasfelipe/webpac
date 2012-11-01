@@ -92,6 +92,7 @@ var game = {
 		for(var i=0; i<this.objects.length; i++) {
 			var obj = this.objects[i];
 
+			// Objects direction
 			if(this.keydown.left) {
 				obj.direction.x = -1;
 				obj.direction.y = 0;
@@ -106,17 +107,24 @@ var game = {
 				obj.direction.y = 1;
 			}
 
+			// Calculates position
 			obj.position.x += (obj.direction.x * obj.speed);
 			obj.position.y += (obj.direction.y * obj.speed);
 
-			if(obj.position.x < 0) {
-				obj.position.x = 0;
-			} else if((obj.position.x + obj.getImage().width) > this.screenWidth) {
-				obj.position.x = this.screenWidth - obj.getImage().width;
-			} else if(obj.position.y < 0) {
-				obj.position.y = 0;
-			} else if ((obj.position.y + obj.getImage().height) > this.screenHeight) {
-				obj.position.y = this.screenHeight - obj.getImage().height;
+
+			// Position always inside screen bounds
+			var objImage = obj.getImage();
+			var objImgHalfWidth = objImage.width / 2;
+			var objImgHalfHeight = objImage.height / 2;
+
+			if(obj.position.x - objImgHalfWidth < 0) {
+				obj.position.x = objImgHalfWidth;
+			} else if((obj.position.x + objImgHalfWidth) > this.screenWidth) {
+				obj.position.x = this.screenWidth - objImgHalfWidth;
+			} else if(obj.position.y - objImgHalfHeight < 0) {
+				obj.position.y = objImgHalfHeight;
+			} else if ((obj.position.y + objImgHalfHeight) > this.screenHeight) {
+				obj.position.y = this.screenHeight - objImgHalfHeight;
 			}
 		}
 
@@ -125,19 +133,42 @@ var game = {
 	draw: function() {
   		this.clearCanvas();
 
+  		this.context.save();
+
   		// console.log('drawing ' + this.objects.length + ' objects');
   		for(var i=0; i<this.objects.length; i++) {
   			var obj = this.objects[i];
   			var objImage = obj.getImage();
+  			var objImgHalfWidth = objImage.width / 2;
+			var objImgHalfHeight = objImage.height / 2;
 
-  			this.context.fillText('('+obj.position.x+','+obj.position.y+')', obj.position.x-5, obj.position.y-5);
+			this.context.fillText('('+obj.position.x+','+obj.position.y+')', 
+				obj.position.x-5-objImgHalfWidth, obj.position.y-5-objImgHalfHeight);
+  			this.context.translate(obj.position.x, obj.position.y);
+
+  			if(obj.direction.x != 0) {
+  				this.context.scale(obj.direction.x,1);	
+  			}
+
+  			if(obj.direction.y != 0) {
+
+  			}
+  			
   			this.context.drawImage(this.spriteSheet, 
   				objImage.x, objImage.y, objImage.width, objImage.height, 
-  				obj.position.x, obj.position.y, objImage.width, objImage.height);
+  				-objImgHalfWidth, -objImgHalfHeight, objImage.width, objImage.height);
   		}
+
+  		this.context.restore();
 	},
 	clearCanvas: function() {
 		this.context.clearRect(0, 0, this.screenWidth, this.screenHeight);
+		
+		// Reset Transform
+      	// 1 0 0
+      	// 0 1 0
+      	// 0 0 1
+		this.context.setTransform(1,0,0,1,0,0);
 		// this.context.translate(0, 0);
 		// this.context.scale(1,1);
 		//this.canvas.width = this.canvas.width;
@@ -150,8 +181,8 @@ var game = {
 
 		// TODO: create a resource factory.
 		var pacman = Object.create(Sprite);
-		pacman.position.x = 100;
-		pacman.position.y = 50;
+		pacman.position.x = this.screenWidth / 2;
+		pacman.position.y = this.screenHeight / 2;
 
 		var img01 = Object.create(SpriteImage);
 		img01.x = 282;

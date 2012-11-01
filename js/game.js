@@ -2,11 +2,23 @@ var game = {
 	
 	canvas: null,
 	context: null,
-	screenWidth: 640,
-	screenHeight: 480,
+	screenWidth: 320,
+	screenHeight: 240,
 	loop: null,
 	spriteSheet: null,
 	objects: new Array(),
+	keydown: {
+		left: false,
+		right: false,
+		up: false,
+		down: false,
+		reset: function() {
+			this.left = false;
+			this.right = false;
+			this.up = false;
+			this.down = false;
+		}
+	},
 
 
 	create: function() {
@@ -46,8 +58,30 @@ var game = {
 			console.log('game quit');
 	},
 	update: function() {
-		this.objects[0].position.x += 1;
-		this.objects[0].position.y += 1;
+
+		for(var i=0; i<this.objects.length; i++) {
+			var obj = this.objects[i];
+
+
+			if(this.keydown.left) {
+				obj.direction.x = -1;
+				obj.direction.y = 0;
+			} else if(this.keydown.right) {
+				obj.direction.x = 1;
+				obj.direction.y = 0;
+			} else if(this.keydown.up) {
+				obj.direction.x = 0;
+				obj.direction.y = -1;
+			} else if(this.keydown.down) {
+				obj.direction.x = 0;
+				obj.direction.y = 1;
+			}
+
+			obj.position.x += (obj.direction.x * obj.speed);
+			obj.position.y += (obj.direction.y * obj.speed);
+		}
+
+		this.keydown.reset();
 	},
 	draw: function() {
   		this.erase();
@@ -70,6 +104,7 @@ var game = {
 		var pacman = Object.create(Sprite);
 		pacman.position.x = 100;
 		pacman.position.y = 50;
+		pacman.speed = 3;
 
 		var img01 = Object.create(SpriteImage);
 		img01.x = 282;
@@ -101,14 +136,20 @@ var game = {
 			console.log('key hit ' + String.fromCharCode(e.keyCode));
 			if(e.keyCode == 81) { // Q
 				game.quit();
-			}
-			if(e.keyCode == 13) { // ENTER
+			} else if(e.keyCode == 13) { // ENTER
 				game.init();
-			}
-			if(e.keyCode == 32) { // SPACE
+			} else if(e.keyCode == 32) { // SPACE
 				game.erase();
+			} else if(e.keyCode == 37) { // LEFT
+				game.keydown.left = true;
+			} else if(e.keyCode == 39) { // RIGHT
+				game.keydown.right = true;
+			} else if(e.keyCode == 38) { // UP
+				game.keydown.up = true;
+			} else if(e.keyCode == 40) { // DOWN
+				game.keydown.down = true;
 			}
-		});
+		}, false);
 	}
 }
 

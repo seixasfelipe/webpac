@@ -5,7 +5,7 @@ body {
 	width: 960px;
 }
 canvas {
-	border: solid 1px #000;
+	border: 1px solid #CCC;
 	background-color: #000;
 }
 aside {

@@ -2,8 +2,9 @@ var game = {
 	
 	canvas: null,
 	context: null,
-	screenWidth: 320,
-	screenHeight: 240,
+	// bufferContext: null,
+	screenWidth: 640,
+	screenHeight: 480,
 	loop: null,
 	spriteSheet: null,
 	objects: new Array(),
@@ -29,6 +30,10 @@ var game = {
 		this.canvas.height = this.screenHeight;
 
 		this.context = this.canvas.getContext('2d');
+		// this.bufferContext = this.canvas.getContext('2d');
+
+		this.context.fillStyle = 'red';
+		this.context.font = '10px Lucinda Grande, Lucida Sans Unicode, Verdana, sans-serif';
 
 		var container = document.getElementById('container');
 		if(container)
@@ -40,6 +45,33 @@ var game = {
 		console.log('game created!');
 	},
 	init: function() {
+
+		this.context.clearRect(0, 0, this.screenWidth, this.screenHeight);
+
+	 //    for (var x = 0; x <= this.screenWidth; x += 10) {
+	 //        this.context.moveTo(0.5 + x, 0);
+	 //        this.context.lineTo(0.5 + x, this.screenHeight);
+	 //    }
+
+
+	 //    for (var x = 0; x <= this.screenHeight; x += 10) {
+	 //        this.context.moveTo(0, 0.5 + x);
+	 //        this.context.lineTo(this.screenWidth, 0.5 + x);
+	 //    }
+
+	 //    this.context.strokeStyle = "red";
+	 //    this.context.stroke();
+
+		// this.context.translate(this.screenWidth/2, this.screenHeight/2);
+		// this.context.scale(-1, 1);
+
+		// this.context.drawImage(this.spriteSheet, 
+		// 	282, 42, 32, 32, 
+		// 	0, 0, 32, 32);
+
+		// return;
+
+
 		if(this.loop)
 			return false;
 
@@ -62,7 +94,6 @@ var game = {
 		for(var i=0; i<this.objects.length; i++) {
 			var obj = this.objects[i];
 
-
 			if(this.keydown.left) {
 				obj.direction.x = -1;
 				obj.direction.y = 0;
@@ -79,23 +110,41 @@ var game = {
 
 			obj.position.x += (obj.direction.x * obj.speed);
 			obj.position.y += (obj.direction.y * obj.speed);
+
+			if(obj.position.x < 0) {
+				obj.position.x = 0;
+			} else if((obj.position.x + obj.getImage().width) > this.screenWidth) {
+				obj.position.x = this.screenWidth - obj.getImage().width;
+			} else if(obj.position.y < 0) {
+				obj.position.y = 0;
+			} else if ((obj.position.y + obj.getImage().height) > this.screenHeight) {
+				obj.position.y = this.screenHeight - obj.getImage().height;
+			}
 		}
 
 		this.keydown.reset();
 	},
 	draw: function() {
-  		this.erase();
+  		this.clearCanvas();
 
+  		console.log('drawing ' + this.objects.length + ' objects');
   		for(var i=0; i<this.objects.length; i++) {
   			var obj = this.objects[i];
   			var objImage = obj.getImage();
+
+  			this.context.fillText('('+obj.position.x+','+obj.position.y+')', obj.position.x-5, obj.position.y-5);
+  			// this.context.translate(obj.position.x, obj.position.y);
+    		// this.context.scale(-1, 1);
   			this.context.drawImage(this.spriteSheet, 
   				objImage.x, objImage.y, objImage.width, objImage.height, 
   				obj.position.x, obj.position.y, objImage.width, objImage.height);
   		}
 	},
-	erase: function() {
-		this.canvas.width = this.canvas.width;
+	clearCanvas: function() {
+		this.context.clearRect(0, 0, this.screenWidth, this.screenHeight);
+		this.context.translate(0, 0);
+		this.context.scale(1,1);
+		//this.canvas.width = this.canvas.width;
 	},
 	loadResources: function() {
 		this.spriteSheet = new Image();
@@ -104,18 +153,17 @@ var game = {
 		var pacman = Object.create(Sprite);
 		pacman.position.x = 100;
 		pacman.position.y = 50;
-		pacman.speed = 3;
 
 		var img01 = Object.create(SpriteImage);
 		img01.x = 282;
 		img01.y = 2;
-		img01.width = 32;
+		img01.width = 24;
 		img01.height = 32;
 
 		var img02 = Object.create(SpriteImage);
 		img02.x = 282;
 		img02.y = 42;
-		img02.width = 32;
+		img02.width = 30;
 		img02.height = 32;
 
 		var img03 = Object.create(SpriteImage);
@@ -139,7 +187,7 @@ var game = {
 			} else if(e.keyCode == 13) { // ENTER
 				game.init();
 			} else if(e.keyCode == 32) { // SPACE
-				game.erase();
+				game.clearCanvas();
 			} else if(e.keyCode == 37) { // LEFT
 				game.keydown.left = true;
 			} else if(e.keyCode == 39) { // RIGHT

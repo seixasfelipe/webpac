@@ -1,0 +1,10 @@
+body {
+	font-family: "Lucinda Grande", "Lucida Sans Unicode", Verdana, sans-serif;
+	line-height: 1.6;
+	margin: 0 auto;
+	width: 960px;
+}
+canvas {
+	border: solid 1px #000;
+	background-color: #000;
+}

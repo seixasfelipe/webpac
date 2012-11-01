@@ -1,0 +1,15 @@
+.pacman-big-hungry {
+	background: url('images/pacman-sprites.png') no-repeat -282px -2px;
+	width: 24px;
+	height: 32px;
+}
+.pacman-big-normal {
+	background: url('images/pacman-sprites.png') no-repeat -282px -42px;
+	width: 30px;
+	height: 32px;
+}
+.pacman-big-dead {
+	background: url('images/pacman-sprites.png') no-repeat -282px -82px;
+	width: 32px;
+	height: 32px;
+}

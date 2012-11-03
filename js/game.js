@@ -20,6 +20,10 @@ var game = {
 		}
 	},
 	map: null,
+	debug: {
+		toggleBounds: false,
+		togglePosition: false
+	},
 
 
 	create: function() {
@@ -85,16 +89,30 @@ var game = {
 				obj.direction.y = 1;
 			}
 
-			// Calculates position
 			obj.position.x += (obj.direction.x * obj.speed);
 			obj.position.y += (obj.direction.y * obj.speed);
 
 			var objImage = obj.getImage();
-			var objImgHalfWidth = objImage.width / 2;
-			var objImgHalfHeight = objImage.height / 2;
+			var objImgHalfWidth = objImage.width / 4;
+			var objImgHalfHeight = objImage.height / 4;
+			
+			// var futurePositionX = obj.position.x + (obj.direction.x * obj.speed) + (obj.width / 2);
+			// var futurePositionY = obj.position.y + (obj.direction.y * obj.speed) + (obj.height / 2);
+			// var futureMapPosition = this.map.getMapPosition(futurePositionX, futurePositionY);
 
-			var currentMapPosition = this.map.currentMapPosition(obj.position.x, obj.position.y);
 			// Collision detection
+			// var objBounds = obj.getBounds();
+			// if(this.map.getBlockType(objBounds.topLeft.x, objBounds.topLeft.y) != 3 &&
+			// 	this.map.getBlockType(objBounds.topRight.x, objBounds.topRight.y) != 3 &&
+			// 	this.map.getBlockType(objBounds.bottomLeft.x, objBounds.bottomLeft.y) != 3 &&
+			// 	this.map.getBlockType(objBounds.bottomRight.x, objBounds.bottomRight.y) != 3) {
+			// 	obj.position.x += (obj.direction.x * obj.speed);
+			// 	obj.position.y += (obj.direction.y * obj.speed);
+			// }
+			// if(this.map.matrix[(futureMapPosition.row*this.map.maxCols)+futureMapPosition.col] != 3) {
+			// 	obj.position.x += (obj.direction.x * obj.speed);
+			// 	obj.position.y += (obj.direction.y * obj.speed);
+			// }
 
 			// Position always inside screen bounds
 			if(obj.position.x - objImgHalfWidth < 0) {
@@ -115,43 +133,44 @@ var game = {
 
   		this.context.save();
 
-  		var initialX = 0.5;
-  		var initialY = 0.5;
+  		var initialX = 5;
+  		var initialY = 5;
+  		
   		// Draws map
   		for(var i=0; i<this.map.maxRows; i++) {
   			for(var j=0; j<this.map.maxCols; j++) {
-  				// console.log('map['+((i*28)+j)+'] is '+this.map.matrix[(i*28)+j]);
   				if(this.map.matrix[(i*this.map.maxCols)+j] == 3) {
-  					// console.log('is a block [3].');
   					var currentX = initialX+(j*this.map.blockWidth);
   					var currentY = initialY+(i*this.map.blockHeight);
 
-  					// console.log('currentX is ' + currentX);
-  					// console.log('currentY is ' + currentY);
-  					// console.log('lineTo(' + (currentX + this.map.blockWidth) + ',' + currentY + ')');
-
 	  				this.context.beginPath();
 	  				this.context.rect(currentX, currentY, this.map.blockWidth, this.map.blockHeight);
-	  				// this.context.moveTo(currentX,currentY);
-	  				// this.context.lineTo(currentX + this.map.blockSizeX, currentY);
 	  				this.context.stroke();
   				}
   			}
   		}
 
-  		// console.log('drawing ' + this.objects.length + ' objects');
   		for(var i=0; i<this.objects.length; i++) {
   			var obj = this.objects[i];
   			var objImage = obj.getImage();
   			var objImgHalfWidth = objImage.width / 2;
 			var objImgHalfHeight = objImage.height / 2;
 
-			this.context.fillText('('+obj.position.x+','+obj.position.y+')', 
-				obj.position.x-10-objImgHalfWidth, obj.position.y-5-objImgHalfHeight);
+			if(this.debug.togglePosition) {
+				this.context.fillText('('+obj.position.x+','+obj.position.y+')', 
+					obj.position.x-10-obj.width*0.5, obj.position.y-5-obj.height*0.5);
 
-			var currentMapPosition = this.map.currentMapPosition(obj.position.x, obj.position.y);
-			this.context.fillText('('+currentMapPosition.row+'x'+currentMapPosition.col+')',
-				obj.position.x-10-objImgHalfWidth, obj.position.y+objImage.height);
+				var currentMapPosition = this.map.getMapPosition(obj.position.x, obj.position.y);
+				this.context.fillText('('+currentMapPosition.col+'x'+currentMapPosition.row+')',
+					obj.position.x-10-obj.width*0.5, obj.position.y+10+obj.height*0.5);
+			}
+
+			if(this.debug.toggleBounds) {
+				this.context.strokeStyle = 'green';
+				this.context.beginPath();
+				this.context.rect(obj.getBounds().topLeft.x, obj.getBounds().topLeft.y, obj.width, obj.height);
+				this.context.stroke();
+			}
   			
   			this.context.translate(obj.position.x, obj.position.y);
 
@@ -193,15 +212,16 @@ var game = {
 		this.map = Object.create(Map);
 		this.map.matrix = [
 			3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,
-			3,1,1,1,1,1,1,1,1,1,1,1,1,3,3,1,1,1,1,1,1,1,1,1,1,1,1,3,
-			3,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,3,
+			3,1,1,1,1,1,1,1,1,1,1,1,1,3,3,1,3,3,3,1,1,1,1,1,1,1,1,3,
+			3,1,3,3,1,3,3,1,1,1,3,3,1,1,1,1,3,3,3,1,3,3,3,3,1,3,1,3,
+			3,1,1,1,1,1,1,1,3,3,3,3,1,3,3,1,1,1,1,1,1,1,1,1,1,1,1,3,
 			3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
 		];
 
 		// TODO: create a resource factory.
 		var pacman = Object.create(Sprite);
-		pacman.position.x = 24;
-		pacman.position.y = 24;
+		pacman.position.x = this.map.blockWidth*1.5+5;
+		pacman.position.y = this.map.blockHeight*1.5+5;
 
 		var img01 = Object.create(SpriteImage);
 		img01.x = 282;
@@ -247,6 +267,10 @@ var game = {
 				game.keydown.up = true;
 			} else if(e.keyCode == 40) { // DOWN
 				game.keydown.down = true;
+			} else if(String.fromCharCode(e.keyCode) == 'A') {
+				game.debug.toggleBounds = !game.debug.toggleBounds;
+			} else if(String.fromCharCode(e.keyCode) == 'S') {
+				game.debug.togglePosition = !game.debug.togglePosition;
 			}
 		}, false);
 	}

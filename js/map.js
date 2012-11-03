@@ -1,14 +1,24 @@
 var Map = {
-	maxRows: 4,
+	maxRows: 5,
 	maxCols: 28,
-	blockWidth: 16,
-	blockHeight: 16,
+	blockWidth: 22,
+	blockHeight: 22,
 	matrix: new Array(),
 
-	currentMapPosition: function(positionX, positionY) {
+	getMapPosition: function(positionX, positionY) {
 		return {
-			row: Math.floor(positionX/this.maxCols),
-			col: Math.floor(positionY/this.maxRows)
+			row: Math.floor(positionY/this.blockHeight),
+			col: Math.floor(positionX/this.blockWidth)			
+		}
+	},
+	getBlockType: function(positionX, positionY) {
+		var mapPosition = this.getMapPosition(positionX, positionY);
+		return this.matrix[ (mapPosition.row*this.maxCols) + mapPosition.col];
+	},
+	getCoordenate: function(row, col) {
+		return {
+			x: row*this.blockHeight + (this.blockHeight / 2),
+			y: col*this.blockWidth + (this.blockWidth / 2)
 		}
 	}
 }

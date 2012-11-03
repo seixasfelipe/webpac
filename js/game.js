@@ -31,7 +31,7 @@ var game = {
 		this.context = this.canvas.getContext('2d');
 
 		this.context.fillStyle = 'red';
-		this.context.font = '10px Lucinda Grande, Lucida Sans Unicode, Verdana, sans-serif';
+		this.context.font = 'bold 10px Lucinda Grande, Lucida Sans Unicode, Verdana, sans-serif';
 
 		var container = document.getElementById('container');
 		if(container)
@@ -44,7 +44,7 @@ var game = {
 	},
 	init: function() {
 
-		this.context.clearRect(0, 0, this.screenWidth, this.screenHeight);
+		this.clearCanvas();
 
 	 //    for (var x = 0; x <= this.screenWidth; x += 10) {
 	 //        this.context.moveTo(0.5 + x, 0);
@@ -143,7 +143,7 @@ var game = {
 			var objImgHalfHeight = objImage.height / 2;
 
 			this.context.fillText('('+obj.position.x+','+obj.position.y+')', 
-				obj.position.x-5-objImgHalfWidth, obj.position.y-5-objImgHalfHeight);
+				obj.position.x-10-objImgHalfWidth, obj.position.y-5-objImgHalfHeight);
   			this.context.translate(obj.position.x, obj.position.y);
 
   			if(obj.direction.x != 0) {
@@ -168,7 +168,7 @@ var game = {
       	// 1 0 0
       	// 0 1 0
       	// 0 0 1
-		this.context.setTransform(1,0,0,1,0,0);
+		//this.context.setTransform(1,0,0,1,0,0);
 		// this.context.translate(0, 0);
 		// this.context.scale(1,1);
 		//this.canvas.width = this.canvas.width;
@@ -189,6 +189,10 @@ var game = {
 		img01.y = 2;
 		img01.width = 24;
 		img01.height = 32;
+		// img01.x = 3;
+		// img01.y = 23;
+		// img01.width = 12;
+		// img01.height = 13;
 
 		var img02 = Object.create(SpriteImage);
 		img02.x = 282;

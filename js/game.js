@@ -91,10 +91,6 @@ var game = {
 
 			obj.position.x += (obj.direction.x * obj.speed);
 			obj.position.y += (obj.direction.y * obj.speed);
-
-			var objImage = obj.getImage();
-			var objImgHalfWidth = objImage.width / 4;
-			var objImgHalfHeight = objImage.height / 4;
 			
 			// var futurePositionX = obj.position.x + (obj.direction.x * obj.speed) + (obj.width / 2);
 			// var futurePositionY = obj.position.y + (obj.direction.y * obj.speed) + (obj.height / 2);
@@ -115,14 +111,16 @@ var game = {
 			// }
 
 			// Position always inside screen bounds
-			if(obj.position.x - objImgHalfWidth < 0) {
-				obj.position.x = objImgHalfWidth;
-			} else if((obj.position.x + objImgHalfWidth) > this.screenWidth) {
-				obj.position.x = this.screenWidth - objImgHalfWidth;
-			} else if(obj.position.y - objImgHalfHeight < 0) {
-				obj.position.y = objImgHalfHeight;
-			} else if ((obj.position.y + objImgHalfHeight) > this.screenHeight) {
-				obj.position.y = this.screenHeight - objImgHalfHeight;
+			var objQuarterWidth = obj.width * 0.25;
+			var objQuarterHeight = obj.height * 0.25;
+			if(obj.position.x - objQuarterWidth < 0) {
+				obj.position.x = objQuarterWidth;
+			} else if((obj.position.x + objQuarterWidth) > this.screenWidth) {
+				obj.position.x = this.screenWidth - objQuarterWidth;
+			} else if(obj.position.y - objQuarterHeight < 0) {
+				obj.position.y = objQuarterHeight;
+			} else if ((obj.position.y + objQuarterHeight) > this.screenHeight) {
+				obj.position.y = this.screenHeight - objQuarterHeight;
 			}
 		}
 
@@ -133,6 +131,35 @@ var game = {
 
   		this.context.save();
 
+  		this.drawMap();
+
+  		for(var i=0; i<this.objects.length; i++) {
+  			var obj = this.objects[i];
+
+			this.drawDebugInfo(obj);
+  			this.context.translate(obj.position.x, obj.position.y);
+
+  			if(obj.direction.x != 0) {
+  				this.context.scale(obj.direction.x*0.5,0.5);
+  			} else {
+  				this.context.scale(0.5,0.5);
+  			}
+
+  			if(obj.direction.y != 0) {
+
+  			}
+  			
+  			var objImage = obj.getImage();
+  			var objImgHalfWidth = objImage.width*0.5;
+			var objImgHalfHeight = objImage.height*0.5;
+  			this.context.drawImage(this.spriteSheet, 
+  				objImage.x, objImage.y, objImage.width, objImage.height, 
+  				-objImgHalfWidth, -objImgHalfHeight, objImage.width, objImage.height);
+  		}
+
+  		this.context.restore();
+	},
+	drawMap: function() {
   		var initialX = 5;
   		var initialY = 5;
   		
@@ -149,47 +176,23 @@ var game = {
   				}
   			}
   		}
+	},
+	drawDebugInfo: function(obj) {
+		if(this.debug.togglePosition) {
+			this.context.fillText('('+obj.position.x+','+obj.position.y+')', 
+				obj.position.x-10-obj.width*0.5, obj.position.y-5-obj.height*0.5);
 
-  		for(var i=0; i<this.objects.length; i++) {
-  			var obj = this.objects[i];
-  			var objImage = obj.getImage();
-  			var objImgHalfWidth = objImage.width / 2;
-			var objImgHalfHeight = objImage.height / 2;
+			var currentMapPosition = this.map.getMapPosition(obj.position.x, obj.position.y);
+			this.context.fillText('('+currentMapPosition.col+'x'+currentMapPosition.row+')',
+				obj.position.x-10-obj.width*0.5, obj.position.y+10+obj.height*0.5);
+		}
 
-			if(this.debug.togglePosition) {
-				this.context.fillText('('+obj.position.x+','+obj.position.y+')', 
-					obj.position.x-10-obj.width*0.5, obj.position.y-5-obj.height*0.5);
-
-				var currentMapPosition = this.map.getMapPosition(obj.position.x, obj.position.y);
-				this.context.fillText('('+currentMapPosition.col+'x'+currentMapPosition.row+')',
-					obj.position.x-10-obj.width*0.5, obj.position.y+10+obj.height*0.5);
-			}
-
-			if(this.debug.toggleBounds) {
-				this.context.strokeStyle = 'green';
-				this.context.beginPath();
-				this.context.rect(obj.getBounds().topLeft.x, obj.getBounds().topLeft.y, obj.width, obj.height);
-				this.context.stroke();
-			}
-  			
-  			this.context.translate(obj.position.x, obj.position.y);
-
-  			if(obj.direction.x != 0) {
-  				this.context.scale(obj.direction.x*0.5,0.5);
-  			} else {
-  				this.context.scale(0.5,0.5);
-  			}
-
-  			if(obj.direction.y != 0) {
-
-  			}
-  			
-  			this.context.drawImage(this.spriteSheet, 
-  				objImage.x, objImage.y, objImage.width, objImage.height, 
-  				-objImgHalfWidth, -objImgHalfHeight, objImage.width, objImage.height);
-  		}
-
-  		this.context.restore();
+		if(this.debug.toggleBounds) {
+			this.context.strokeStyle = 'green';
+			this.context.beginPath();
+			this.context.rect(obj.getBounds().topLeft.x, obj.getBounds().topLeft.y, obj.width, obj.height);
+			this.context.stroke();
+		}
 	},
 	clearCanvas: function() {
 		this.context.clearRect(0, 0, this.screenWidth, this.screenHeight);

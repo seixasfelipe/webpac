@@ -5,11 +5,6 @@ var Sprite = {
 	currentImageIndex: 0,
 	images: new Array(),
 	getImage: function() {
-		/*
-		this.currentImageIndex += 1;
-		if(this.currentImageIndex > this.images.length - 1)
-			this.currentImageIndex = 0;
-		*/
 		return this.images[this.currentImageIndex];
 	}
 };

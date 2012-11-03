@@ -7,7 +7,7 @@ body {
 canvas {
 	border: 1px solid #CCC;
 	background-color: #000;
-	background: url(../images/pacman-map.gif);
+	/*background: url(../images/pacman-map.gif);*/
 }
 aside {
 	border: 1px solid #CCC;

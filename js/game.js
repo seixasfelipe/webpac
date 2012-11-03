@@ -19,6 +19,7 @@ var game = {
 			this.down = false;
 		}
 	},
+	map: null,
 
 
 	create: function() {
@@ -30,6 +31,7 @@ var game = {
 
 		this.context = this.canvas.getContext('2d');
 
+		this.context.strokeStyle = 'blue';
 		this.context.fillStyle = 'red';
 		this.context.font = 'bold 10px Lucinda Grande, Lucida Sans Unicode, Verdana, sans-serif';
 
@@ -45,30 +47,6 @@ var game = {
 	init: function() {
 
 		this.clearCanvas();
-
-	 //    for (var x = 0; x <= this.screenWidth; x += 10) {
-	 //        this.context.moveTo(0.5 + x, 0);
-	 //        this.context.lineTo(0.5 + x, this.screenHeight);
-	 //    }
-
-
-	 //    for (var x = 0; x <= this.screenHeight; x += 10) {
-	 //        this.context.moveTo(0, 0.5 + x);
-	 //        this.context.lineTo(this.screenWidth, 0.5 + x);
-	 //    }
-
-	 //    this.context.strokeStyle = "red";
-	 //    this.context.stroke();
-
-		// this.context.translate(this.screenWidth/2, this.screenHeight/2);
-		// this.context.scale(-1, 1);
-
-		// this.context.drawImage(this.spriteSheet, 
-		// 	282, 42, 32, 32, 
-		// 	0, 0, 32, 32);
-
-		// return;
-
 
 		if(this.loop)
 			return false;
@@ -111,12 +89,14 @@ var game = {
 			obj.position.x += (obj.direction.x * obj.speed);
 			obj.position.y += (obj.direction.y * obj.speed);
 
-
-			// Position always inside screen bounds
 			var objImage = obj.getImage();
 			var objImgHalfWidth = objImage.width / 2;
 			var objImgHalfHeight = objImage.height / 2;
 
+			var currentMapPosition = this.map.currentMapPosition(obj.position.x, obj.position.y);
+			// Collision detection
+
+			// Position always inside screen bounds
 			if(obj.position.x - objImgHalfWidth < 0) {
 				obj.position.x = objImgHalfWidth;
 			} else if((obj.position.x + objImgHalfWidth) > this.screenWidth) {
@@ -135,6 +115,30 @@ var game = {
 
   		this.context.save();
 
+  		var initialX = 0.5;
+  		var initialY = 0.5;
+  		// Draws map
+  		for(var i=0; i<this.map.maxRows; i++) {
+  			for(var j=0; j<this.map.maxCols; j++) {
+  				// console.log('map['+((i*28)+j)+'] is '+this.map.matrix[(i*28)+j]);
+  				if(this.map.matrix[(i*this.map.maxCols)+j] == 3) {
+  					// console.log('is a block [3].');
+  					var currentX = initialX+(j*this.map.blockWidth);
+  					var currentY = initialY+(i*this.map.blockHeight);
+
+  					// console.log('currentX is ' + currentX);
+  					// console.log('currentY is ' + currentY);
+  					// console.log('lineTo(' + (currentX + this.map.blockWidth) + ',' + currentY + ')');
+
+	  				this.context.beginPath();
+	  				this.context.rect(currentX, currentY, this.map.blockWidth, this.map.blockHeight);
+	  				// this.context.moveTo(currentX,currentY);
+	  				// this.context.lineTo(currentX + this.map.blockSizeX, currentY);
+	  				this.context.stroke();
+  				}
+  			}
+  		}
+
   		// console.log('drawing ' + this.objects.length + ' objects');
   		for(var i=0; i<this.objects.length; i++) {
   			var obj = this.objects[i];
@@ -144,10 +148,17 @@ var game = {
 
 			this.context.fillText('('+obj.position.x+','+obj.position.y+')', 
 				obj.position.x-10-objImgHalfWidth, obj.position.y-5-objImgHalfHeight);
+
+			var currentMapPosition = this.map.currentMapPosition(obj.position.x, obj.position.y);
+			this.context.fillText('('+currentMapPosition.row+'x'+currentMapPosition.col+')',
+				obj.position.x-10-objImgHalfWidth, obj.position.y+objImage.height);
+  			
   			this.context.translate(obj.position.x, obj.position.y);
 
   			if(obj.direction.x != 0) {
-  				this.context.scale(obj.direction.x,1);	
+  				this.context.scale(obj.direction.x*0.5,0.5);
+  			} else {
+  				this.context.scale(0.5,0.5);
   			}
 
   			if(obj.direction.y != 0) {
@@ -179,20 +190,24 @@ var game = {
 		this.spriteSheet = new Image();
 		this.spriteSheet.src = 'images/pacman-sprites.png';
 
+		this.map = Object.create(Map);
+		this.map.matrix = [
+			3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,
+			3,1,1,1,1,1,1,1,1,1,1,1,1,3,3,1,1,1,1,1,1,1,1,1,1,1,1,3,
+			3,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,3,
+			3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
+		];
+
 		// TODO: create a resource factory.
 		var pacman = Object.create(Sprite);
-		pacman.position.x = this.screenWidth / 2;
-		pacman.position.y = this.screenHeight / 2;
+		pacman.position.x = 24;
+		pacman.position.y = 24;
 
 		var img01 = Object.create(SpriteImage);
 		img01.x = 282;
 		img01.y = 2;
 		img01.width = 24;
 		img01.height = 32;
-		// img01.x = 3;
-		// img01.y = 23;
-		// img01.width = 12;
-		// img01.height = 13;
 
 		var img02 = Object.create(SpriteImage);
 		img02.x = 282;

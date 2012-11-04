@@ -20,5 +20,9 @@ var Map = {
 			x: row*this.blockHeight + (this.blockHeight / 2),
 			y: col*this.blockWidth + (this.blockWidth / 2)
 		}
+	},
+	getCenterPosition: function(positionX, positionY) {
+		var mapPosition = this.getMapPosition(positionX, positionY);
+		return this.getCoordenate(mapPosition.row, mapPosition.col);
 	}
 }

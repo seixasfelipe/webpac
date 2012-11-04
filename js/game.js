@@ -22,7 +22,8 @@ var game = {
 	map: null,
 	debug: {
 		toggleBounds: false,
-		togglePosition: false
+		togglePosition: false,
+		toggleBoundsPosition: false
 	},
 
 
@@ -73,6 +74,7 @@ var game = {
 
 		for(var i=0; i<this.objects.length; i++) {
 			var obj = this.objects[i];
+			var objBounds = obj.getBounds();
 
 			// Objects direction
 			if(this.keydown.left) {
@@ -89,38 +91,44 @@ var game = {
 				obj.direction.y = 1;
 			}
 
-			obj.position.x += (obj.direction.x * obj.speed);
-			obj.position.y += (obj.direction.y * obj.speed);
-			
-			// var futurePositionX = obj.position.x + (obj.direction.x * obj.speed) + (obj.width / 2);
-			// var futurePositionY = obj.position.y + (obj.direction.y * obj.speed) + (obj.height / 2);
-			// var futureMapPosition = this.map.getMapPosition(futurePositionX, futurePositionY);
-
 			// Collision detection
-			// var objBounds = obj.getBounds();
-			// if(this.map.getBlockType(objBounds.topLeft.x, objBounds.topLeft.y) != 3 &&
-			// 	this.map.getBlockType(objBounds.topRight.x, objBounds.topRight.y) != 3 &&
-			// 	this.map.getBlockType(objBounds.bottomLeft.x, objBounds.bottomLeft.y) != 3 &&
-			// 	this.map.getBlockType(objBounds.bottomRight.x, objBounds.bottomRight.y) != 3) {
-			// 	obj.position.x += (obj.direction.x * obj.speed);
-			// 	obj.position.y += (obj.direction.y * obj.speed);
-			// }
-			// if(this.map.matrix[(futureMapPosition.row*this.map.maxCols)+futureMapPosition.col] != 3) {
-			// 	obj.position.x += (obj.direction.x * obj.speed);
-			// 	obj.position.y += (obj.direction.y * obj.speed);
-			// }
+			if(obj.direction.x == -1) {
+				if(this.map.getBlockType(objBounds.topLeft.x, objBounds.topLeft.y) != 3 &&
+					this.map.getBlockType(objBounds.bottomLeft.x, objBounds.bottomLeft.y) != 3) {
+					obj.position.x += (obj.direction.x * obj.speed);
+					obj.position.y += (obj.direction.y * obj.speed);
+				}
+			} else if(obj.direction.x == 1) {
+				if(this.map.getBlockType(objBounds.topRight.x, objBounds.topRight.y) != 3 &&
+					this.map.getBlockType(objBounds.bottomRight.x, objBounds.bottomRight.y) != 3) {
+					obj.position.x += (obj.direction.x * obj.speed);
+					obj.position.y += (obj.direction.y * obj.speed);
+				}
+			} else if(obj.direction.y == -1) {
+				if(this.map.getBlockType(objBounds.topRight.x, objBounds.topRight.y) != 3 &&
+					this.map.getBlockType(objBounds.topLeft.x, objBounds.topLeft.y) != 3) {
+					obj.position.x += (obj.direction.x * obj.speed);
+					obj.position.y += (obj.direction.y * obj.speed);
+				}
+			} else if(obj.direction.y == 1) {
+				if(this.map.getBlockType(objBounds.bottomRight.x, objBounds.bottomRight.y) != 3 &&
+					this.map.getBlockType(objBounds.bottomLeft.x, objBounds.bottomLeft.y) != 3) {
+					obj.position.x += (obj.direction.x * obj.speed);
+					obj.position.y += (obj.direction.y * obj.speed);
+				}
+			}
 
 			// Position always inside screen bounds
-			var objQuarterWidth = obj.width * 0.25;
-			var objQuarterHeight = obj.height * 0.25;
-			if(obj.position.x - objQuarterWidth < 0) {
-				obj.position.x = objQuarterWidth;
-			} else if((obj.position.x + objQuarterWidth) > this.screenWidth) {
-				obj.position.x = this.screenWidth - objQuarterWidth;
-			} else if(obj.position.y - objQuarterHeight < 0) {
-				obj.position.y = objQuarterHeight;
-			} else if ((obj.position.y + objQuarterHeight) > this.screenHeight) {
-				obj.position.y = this.screenHeight - objQuarterHeight;
+			var objHalfWidth = obj.width * 0.5;
+			var objHalfHeight = obj.height * 0.5;
+			if(obj.position.x - objHalfWidth < 0) {
+				obj.position.x = objHalfWidth;
+			} else if((obj.position.x + objHalfWidth) > this.screenWidth) {
+				obj.position.x = this.screenWidth - objHalfWidth;
+			} else if(obj.position.y - objHalfHeight < 0) {
+				obj.position.y = objHalfHeight;
+			} else if ((obj.position.y + objHalfHeight) > this.screenHeight) {
+				obj.position.y = this.screenHeight - objHalfHeight;
 			}
 		}
 
@@ -160,8 +168,8 @@ var game = {
   		this.context.restore();
 	},
 	drawMap: function() {
-  		var initialX = 5;
-  		var initialY = 5;
+  		var initialX = 0;
+  		var initialY = 0;
   		
   		// Draws map
   		for(var i=0; i<this.map.maxRows; i++) {
@@ -185,6 +193,11 @@ var game = {
 			var currentMapPosition = this.map.getMapPosition(obj.position.x, obj.position.y);
 			this.context.fillText('('+currentMapPosition.col+'x'+currentMapPosition.row+')',
 				obj.position.x-10-obj.width*0.5, obj.position.y+10+obj.height*0.5);
+		}
+
+		if(this.debug.toggleBoundsPosition) {
+			obj.getBounds().debug();
+			this.debug.toggleBoundsPosition = false;
 		}
 
 		if(this.debug.toggleBounds) {
@@ -223,8 +236,8 @@ var game = {
 
 		// TODO: create a resource factory.
 		var pacman = Object.create(Sprite);
-		pacman.position.x = this.map.blockWidth*1.5+5;
-		pacman.position.y = this.map.blockHeight*1.5+5;
+		pacman.position.x = this.map.blockWidth*1.5;
+		pacman.position.y = this.map.blockHeight*1.5;
 
 		var img01 = Object.create(SpriteImage);
 		img01.x = 282;
@@ -274,6 +287,8 @@ var game = {
 				game.debug.toggleBounds = !game.debug.toggleBounds;
 			} else if(String.fromCharCode(e.keyCode) == 'S') {
 				game.debug.togglePosition = !game.debug.togglePosition;
+			} else if(String.fromCharCode(e.keyCode) == 'D') {
+				game.debug.toggleBoundsPosition = !game.debug.toggleBoundsPosition;
 			}
 		}, false);
 	}

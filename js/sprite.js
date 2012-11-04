@@ -1,7 +1,7 @@
 var Sprite = {
 	position: { x: 0, y: 0 },
 	direction: { x: 1, y: 0 },
-	speed: 1,
+	speed: 5,
 	width: 18,
 	height: 18,
 
@@ -28,6 +28,13 @@ var Sprite = {
 			bottomRight: {
 				x: positionX + halfWidth,
 				y: positionY + halfHeight
+			},
+
+			debug: function() {
+				console.log('bounds: topL('+this.topLeft.x+','+this.topLeft.y+') '+
+					'topR('+this.topRight.x+','+this.topRight.y+') '+
+					'botL('+this.bottomLeft.x+','+this.bottomLeft.y+') '+
+					'botR('+this.bottomRight.x+','+this.bottomRight.y+')');
 			}
 		}
 	},

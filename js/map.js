@@ -1,8 +1,8 @@
 var Map = {
 	maxRows: 5,
-	maxCols: 28,
-	blockWidth: 22,
-	blockHeight: 22,
+	maxCols: 26,
+	blockWidth: 24,
+	blockHeight: 24,
 	matrix: new Array(),
 
 	getMapPosition: function(positionX, positionY) {
@@ -15,14 +15,17 @@ var Map = {
 		var mapPosition = this.getMapPosition(positionX, positionY);
 		return this.matrix[ (mapPosition.row*this.maxCols) + mapPosition.col];
 	},
+	getBlockTypeByRowCol: function(row, col) {
+		return this.matrix[ (row*this.maxCols) + col];
+	},
 	getCoordenate: function(row, col) {
 		return {
-			x: row*this.blockHeight + (this.blockHeight / 2),
-			y: col*this.blockWidth + (this.blockWidth / 2)
+			x: col*this.blockHeight + (this.blockWidth*0.5),
+			y: row*this.blockWidth + (this.blockHeight*0.5)
 		}
 	},
 	getCenterPosition: function(positionX, positionY) {
 		var mapPosition = this.getMapPosition(positionX, positionY);
-		return this.getCoordenate(mapPosition.col, mapPosition.row);
+		return this.getCoordenate(mapPosition.row, mapPosition.col);
 	}
 }

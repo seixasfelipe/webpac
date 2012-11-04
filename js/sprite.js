@@ -1,7 +1,7 @@
 var Sprite = {
-	position: { x: 0, y: 0 },
+	position: { x: 0, y: 0, row: 0, col: 0 },
 	direction: { x: 1, y: 0 },
-	speed: 5,
+	speed: 2,
 	width: 18,
 	height: 18,
 

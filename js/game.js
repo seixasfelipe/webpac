@@ -92,29 +92,38 @@ var game = {
 			}
 
 			// Collision detection
+			var mapPosition = this.map.getMapPosition(obj.position.x, obj.position.y);
 			if(obj.direction.x == -1) {
-				if(this.map.getBlockType(objBounds.topLeft.x, objBounds.topLeft.y) != 3 &&
-					this.map.getBlockType(objBounds.bottomLeft.x, objBounds.bottomLeft.y) != 3) {
+				if(this.map.getBlockTypeByRowCol(mapPosition.row, mapPosition.col - 1) != 3) {
 					obj.position.x += (obj.direction.x * obj.speed);
-					obj.position.y += (obj.direction.y * obj.speed);
+				} else {
+					if (this.map.getCoordenate(mapPosition.row, mapPosition.col).x < obj.position.x) {
+						obj.position.x += (obj.direction.x * obj.speed);
+					}
 				}
 			} else if(obj.direction.x == 1) {
-				if(this.map.getBlockType(objBounds.topRight.x, objBounds.topRight.y) != 3 &&
-					this.map.getBlockType(objBounds.bottomRight.x, objBounds.bottomRight.y) != 3) {
+				if(this.map.getBlockTypeByRowCol(mapPosition.row, mapPosition.col + 1) != 3) {
 					obj.position.x += (obj.direction.x * obj.speed);
-					obj.position.y += (obj.direction.y * obj.speed);
+				} else {
+					if (this.map.getCoordenate(mapPosition.row, mapPosition.col).x > obj.position.x) {
+						obj.position.x += (obj.direction.x * obj.speed);
+					}
 				}
 			} else if(obj.direction.y == -1) {
-				if(this.map.getBlockType(objBounds.topRight.x, objBounds.topRight.y) != 3 &&
-					this.map.getBlockType(objBounds.topLeft.x, objBounds.topLeft.y) != 3) {
-					obj.position.x += (obj.direction.x * obj.speed);
+				if(this.map.getBlockTypeByRowCol(mapPosition.row - 1, mapPosition.col) != 3) {
 					obj.position.y += (obj.direction.y * obj.speed);
+				} else {
+					if (this.map.getCoordenate(mapPosition.row, mapPosition.col).y < obj.position.y) {
+						obj.position.y += (obj.direction.y * obj.speed);
+					}
 				}
 			} else if(obj.direction.y == 1) {
-				if(this.map.getBlockType(objBounds.bottomRight.x, objBounds.bottomRight.y) != 3 &&
-					this.map.getBlockType(objBounds.bottomLeft.x, objBounds.bottomLeft.y) != 3) {
-					obj.position.x += (obj.direction.x * obj.speed);
+				if(this.map.getBlockTypeByRowCol(mapPosition.row + 1, mapPosition.col) != 3) {
 					obj.position.y += (obj.direction.y * obj.speed);
+				} else {
+					if (this.map.getCoordenate(mapPosition.row, mapPosition.col).y > obj.position.y) {
+						obj.position.y += (obj.direction.y * obj.speed);
+					}
 				}
 			}
 
@@ -199,6 +208,8 @@ var game = {
 			var currentMapPosition = this.map.getMapPosition(obj.position.x, obj.position.y);
 			this.context.fillText('('+currentMapPosition.col+'x'+currentMapPosition.row+')',
 				obj.position.x-10-obj.width*0.5, obj.position.y+10+obj.height*0.5);
+			this.context.fillText('('+this.map.getCoordenate(currentMapPosition.row, currentMapPosition.col).x+'x'+this.map.getCoordenate(currentMapPosition.row, currentMapPosition.col).y+')',
+				obj.position.x-10-obj.width*0.5, obj.position.y+20+obj.height*0.5);
 		}
 
 		if(this.debug.toggleBoundsPosition) {
@@ -233,11 +244,11 @@ var game = {
 
 		this.map = Object.create(Map);
 		this.map.matrix = [
-			3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,
-			3,1,1,1,1,1,1,1,1,1,1,1,1,3,3,1,3,3,3,1,1,1,1,1,1,1,1,3,
-			3,1,3,3,1,3,3,1,1,1,3,3,1,1,1,1,3,3,3,1,3,3,3,3,1,3,1,3,
-			3,1,1,1,1,1,1,1,3,3,3,3,1,3,3,1,1,1,1,1,1,1,1,1,1,1,1,3,
-			3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
+			3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,
+			3,1,1,1,1,1,1,1,1,1,1,1,1,3,3,1,3,3,3,1,1,1,1,1,1,3,
+			3,1,3,3,1,3,3,1,1,1,3,3,1,1,1,1,3,3,3,1,3,3,3,3,1,3,
+			3,1,1,1,1,1,1,1,3,3,3,3,1,3,3,1,1,1,1,1,1,1,1,1,1,3,
+			3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
 		];
 
 		// TODO: create a resource factory.

@@ -131,23 +131,11 @@ var game = {
 				}
 			}
 
-			// Eat Dot
+			// Eat Dots
 			if(atBlockCenterCoord && this.map.getBlockTypeByRowCol(mapPosition.row, mapPosition.col) == 1) {
 				this.map.changeBlockType(0, mapPosition.row, mapPosition.col);
+				--this.map.remainingDots;
 			}
-
-			// Position always inside screen bounds
-			// var objHalfWidth = obj.width * 0.5;
-			// var objHalfHeight = obj.height * 0.5;
-			// if(obj.position.x - objHalfWidth < 0) {
-			// 	obj.position.x = objHalfWidth;
-			// } else if((obj.position.x + objHalfWidth) > this.screenWidth) {
-			// 	obj.position.x = this.screenWidth - objHalfWidth;
-			// } else if(obj.position.y - objHalfHeight < 0) {
-			// 	obj.position.y = objHalfHeight;
-			// } else if ((obj.position.y + objHalfHeight) > this.screenHeight) {
-			// 	obj.position.y = this.screenHeight - objHalfHeight;
-			// }
 		}
 	},
 	draw: function() {
@@ -156,6 +144,11 @@ var game = {
   		this.context.save();
 
   		this.drawMap();
+  		
+  		this.drawStatus();
+
+  		this.context.fillStyle = 'white';
+		this.context.font = 'bold 10px Lucinda Grande, Lucida Sans Unicode, Verdana, sans-serif';
 
   		for(var i=0; i<this.objects.length; i++) {
   			var obj = this.objects[i];
@@ -179,6 +172,8 @@ var game = {
   			this.context.drawImage(this.spriteSheet, 
   				objImage.x, objImage.y, objImage.width, objImage.height, 
   				-objImgHalfWidth, -objImgHalfHeight, objImage.width, objImage.height);
+
+
   		}
 
   		this.context.restore();
@@ -231,6 +226,17 @@ var game = {
 			this.context.stroke();
 		}
 	},
+	drawStatus: function() {
+		this.context.fillStyle = "green";
+		this.context.font = 'bold 16px Lucinda Grande, Lucida Sans Unicode, Verdana, sans-serif';
+		this.context.fillText('Remaining Dots: ' + this.map.remainingDots,
+			100, 300);
+		if(this.map.remainingDots == 0) {
+			this.context.fillText('Congratulations, YOU WIN!!', 
+				this.screenWidth*0.5, 110);
+		}
+		this.context.fill();
+	},
 	clearCanvas: function() {
 		this.context.clearRect(0, 0, this.screenWidth, this.screenHeight);
 		
@@ -248,13 +254,19 @@ var game = {
 		this.spriteSheet.src = 'images/pacman-sprites.png';
 
 		this.map = Object.create(Map);
-		this.map.matrix = [
+		this.map.init([
 			3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,
-			3,1,1,1,1,1,1,1,1,1,1,1,1,3,3,1,3,3,3,1,1,1,1,1,1,3,
-			3,1,3,3,1,3,3,1,1,1,3,3,1,1,1,1,3,3,3,1,3,3,3,3,1,3,
-			3,1,1,1,1,1,1,1,3,3,3,3,1,3,3,1,1,1,1,1,1,1,1,1,1,3,
+			3,1,1,1,1,1,1,1,1,1,1,1,3,3,1,1,1,1,1,1,1,1,1,1,1,3,
+			3,1,3,1,3,1,3,3,3,1,3,1,3,3,1,3,1,3,3,3,1,3,1,3,1,3,
+			3,1,3,1,3,1,3,3,3,1,3,1,1,1,1,3,1,3,3,3,1,3,1,3,1,3,
+			3,1,3,3,3,1,3,3,3,1,3,1,3,3,1,3,1,3,3,3,1,3,3,3,1,3,
+			3,1,1,1,1,1,1,1,1,1,3,1,1,1,1,3,1,1,1,1,1,1,1,1,1,3,
+			3,1,3,3,3,1,3,3,3,1,3,1,3,3,1,3,1,3,3,3,1,3,3,3,1,3,
+			3,1,3,1,3,1,3,3,3,1,3,1,1,1,1,3,1,3,3,3,1,3,1,3,1,3,
+			3,1,3,1,3,1,3,3,3,1,3,1,3,3,1,3,1,3,3,3,1,3,1,3,1,3,
+			3,1,1,1,1,1,1,1,1,1,1,1,3,3,1,1,1,1,1,1,1,1,1,1,1,3,
 			3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
-		];
+		]);
 
 		// TODO: create a resource factory.
 		var pacman = Object.create(Sprite);

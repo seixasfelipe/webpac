@@ -1,10 +1,15 @@
 var Map = {
-	maxRows: 5,
+	maxRows: 11,
 	maxCols: 26,
 	blockWidth: 24,
 	blockHeight: 24,
 	matrix: new Array(),
+	remainingDots: 0,
 
+	init: function(matrix) {
+		this.matrix = matrix;
+		this.remainingDots = this.getRemainingDots();
+	},
 	getMapPosition: function(positionX, positionY) {
 		return {
 			row: Math.floor(positionY/this.blockHeight),
@@ -34,5 +39,13 @@ var Map = {
 	},
 	changeBlockType: function(blockType, row, col) {
 		this.matrix[ row*this.maxCols + col ] = blockType;
+	},
+	getRemainingDots: function() {
+		var remainingDots = 0;
+		for(var i=0; i<this.matrix.length; i++) {
+			if(this.matrix[i] == 1) 
+				remainingDots++;
+		}
+		return remainingDots;
 	}
 }

@@ -27,5 +27,12 @@ var Map = {
 	getCenterPosition: function(positionX, positionY) {
 		var mapPosition = this.getMapPosition(positionX, positionY);
 		return this.getCoordenate(mapPosition.row, mapPosition.col);
+	},
+	atBlockCenterCoord: function(positionX, positionY) {
+		var centerPosition = this.getCenterPosition(positionX, positionY);
+		return (centerPosition.x == positionX && centerPosition.y == positionY);
+	},
+	changeBlockType: function(blockType, row, col) {
+		this.matrix[ row*this.maxCols + col ] = blockType;
 	}
 }

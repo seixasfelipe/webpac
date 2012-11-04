@@ -75,20 +75,24 @@ var game = {
 		for(var i=0; i<this.objects.length; i++) {
 			var obj = this.objects[i];
 			var objBounds = obj.getBounds();
+			var atBlockCenterCoord = this.map.atBlockCenterCoord(obj.position.x, obj.position.y);
 
-			// Objects direction
-			if(this.keydown.left) {
-				obj.direction.x = -1;
-				obj.direction.y = 0;
-			} else if(this.keydown.right) {
-				obj.direction.x = 1;
-				obj.direction.y = 0;
-			} else if(this.keydown.up) {
-				obj.direction.x = 0;
-				obj.direction.y = -1;
-			} else if(this.keydown.down) {
-				obj.direction.x = 0;
-				obj.direction.y = 1;
+			if(atBlockCenterCoord) {
+				// Objects direction
+				if(this.keydown.left) {
+					obj.direction.x = -1;
+					obj.direction.y = 0;
+				} else if(this.keydown.right) {
+					obj.direction.x = 1;
+					obj.direction.y = 0;
+				} else if(this.keydown.up) {
+					obj.direction.x = 0;
+					obj.direction.y = -1;
+				} else if(this.keydown.down) {
+					obj.direction.x = 0;
+					obj.direction.y = 1;
+				}
+				this.keydown.reset();
 			}
 
 			// Collision detection
@@ -127,21 +131,24 @@ var game = {
 				}
 			}
 
-			// Position always inside screen bounds
-			var objHalfWidth = obj.width * 0.5;
-			var objHalfHeight = obj.height * 0.5;
-			if(obj.position.x - objHalfWidth < 0) {
-				obj.position.x = objHalfWidth;
-			} else if((obj.position.x + objHalfWidth) > this.screenWidth) {
-				obj.position.x = this.screenWidth - objHalfWidth;
-			} else if(obj.position.y - objHalfHeight < 0) {
-				obj.position.y = objHalfHeight;
-			} else if ((obj.position.y + objHalfHeight) > this.screenHeight) {
-				obj.position.y = this.screenHeight - objHalfHeight;
+			// Eat Dot
+			if(atBlockCenterCoord && this.map.getBlockTypeByRowCol(mapPosition.row, mapPosition.col) == 1) {
+				this.map.changeBlockType(0, mapPosition.row, mapPosition.col);
 			}
-		}
 
-		this.keydown.reset();
+			// Position always inside screen bounds
+			// var objHalfWidth = obj.width * 0.5;
+			// var objHalfHeight = obj.height * 0.5;
+			// if(obj.position.x - objHalfWidth < 0) {
+			// 	obj.position.x = objHalfWidth;
+			// } else if((obj.position.x + objHalfWidth) > this.screenWidth) {
+			// 	obj.position.x = this.screenWidth - objHalfWidth;
+			// } else if(obj.position.y - objHalfHeight < 0) {
+			// 	obj.position.y = objHalfHeight;
+			// } else if ((obj.position.y + objHalfHeight) > this.screenHeight) {
+			// 	obj.position.y = this.screenHeight - objHalfHeight;
+			// }
+		}
 	},
 	draw: function() {
   		this.clearCanvas();
@@ -232,8 +239,6 @@ var game = {
       	// 0 1 0
       	// 0 0 1
 		//this.context.setTransform(1,0,0,1,0,0);
-		// this.context.translate(0, 0);
-		// this.context.scale(1,1);
 		//this.canvas.width = this.canvas.width;
 	},
 	loadResources: function() {

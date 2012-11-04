@@ -37,7 +37,7 @@ var game = {
 		this.context = this.canvas.getContext('2d');
 
 		this.context.strokeStyle = 'blue';
-		this.context.fillStyle = 'red';
+		this.context.fillStyle = 'white';
 		this.context.font = 'bold 10px Lucinda Grande, Lucida Sans Unicode, Verdana, sans-serif';
 
 		var container = document.getElementById('container');
@@ -174,13 +174,19 @@ var game = {
   		// Draws map
   		for(var i=0; i<this.map.maxRows; i++) {
   			for(var j=0; j<this.map.maxCols; j++) {
-  				if(this.map.matrix[(i*this.map.maxCols)+j] == 3) {
-  					var currentX = initialX+(j*this.map.blockWidth);
-  					var currentY = initialY+(i*this.map.blockHeight);
+  				var blockType = this.map.matrix[(i*this.map.maxCols)+j];
+  				var currentX = initialX+(j*this.map.blockWidth);
+  				var currentY = initialY+(i*this.map.blockHeight);
 
+  				if(blockType == 3) {
 	  				this.context.beginPath();
 	  				this.context.rect(currentX, currentY, this.map.blockWidth, this.map.blockHeight);
 	  				this.context.stroke();
+  				} else if(blockType == 1) {
+  					var centerPosition = this.map.getCenterPosition(currentX, currentY);
+  					this.context.beginPath();
+  					this.context.rect(centerPosition.x-1, centerPosition.y-1, 3, 3);
+  					this.context.fill();
   				}
   			}
   		}
@@ -201,7 +207,7 @@ var game = {
 		}
 
 		if(this.debug.toggleBounds) {
-			this.context.strokeStyle = 'green';
+			this.context.strokeStyle = 'red';
 			this.context.beginPath();
 			this.context.rect(obj.getBounds().topLeft.x, obj.getBounds().topLeft.y, obj.width, obj.height);
 			this.context.stroke();

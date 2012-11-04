@@ -23,6 +23,6 @@ var Map = {
 	},
 	getCenterPosition: function(positionX, positionY) {
 		var mapPosition = this.getMapPosition(positionX, positionY);
-		return this.getCoordenate(mapPosition.row, mapPosition.col);
+		return this.getCoordenate(mapPosition.col, mapPosition.row);
 	}
 }

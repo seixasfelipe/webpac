@@ -162,8 +162,11 @@ var game = {
   				this.context.scale(0.5,0.5);
   			}
 
-  			if(obj.direction.y != 0) {
-
+  			// WTF?? Angle 1.60!?!? I got it trying and fixing!
+  			if(obj.direction.y > 0) {
+  				this.context.rotate(1.60);
+  			} else if(obj.direction.y < 0) {
+  				this.context.rotate(-1.60);
   			}
   			
   			var objImage = obj.getImage();
@@ -302,7 +305,7 @@ var game = {
 
 		window.addEventListener('keydown', function(e) {
 			// ref: http://www.cambiaresearch.com/articles/15/javascript-char-codes-key-codes
-			console.log('key hit ' + String.fromCharCode(e.keyCode));
+			console.log('key hit ' + String.fromCharCode(e.keyCode).toLowerCase());
 			if(e.keyCode == 81) { // Q
 				game.quit();
 			} else if(e.keyCode == 13) { // ENTER

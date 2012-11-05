@@ -144,22 +144,20 @@ var game = {
   		this.context.save();
 
   		this.drawMap();
-  		
   		this.drawStatus();
-
-  		this.context.fillStyle = 'white';
-		this.context.font = 'bold 10px Lucinda Grande, Lucida Sans Unicode, Verdana, sans-serif';
 
   		for(var i=0; i<this.objects.length; i++) {
   			var obj = this.objects[i];
 
 			this.drawDebugInfo(obj);
+
   			this.context.translate(obj.position.x, obj.position.y);
 
+  			var scaleFactor = 1;
   			if(obj.direction.x != 0) {
-  				this.context.scale(obj.direction.x*0.5,0.5);
+  				this.context.scale(obj.direction.x*scaleFactor,scaleFactor);
   			} else {
-  				this.context.scale(0.5,0.5);
+  				this.context.scale(scaleFactor,scaleFactor);
   			}
 
   			// WTF?? Angle 1.60!?!? I got it trying and fixing!
@@ -176,6 +174,7 @@ var game = {
   				objImage.x, objImage.y, objImage.width, objImage.height, 
   				-objImgHalfWidth, -objImgHalfHeight, objImage.width, objImage.height);
 
+  			// this.context.setTransform(1,0,0,1,0,0);
 
   		}
 
@@ -206,6 +205,9 @@ var game = {
   		}
 	},
 	drawDebugInfo: function(obj) {
+		this.context.fillStyle = 'white';
+		this.context.font = 'bold 10px Lucinda Grande, Lucida Sans Unicode, Verdana, sans-serif';
+
 		if(this.debug.togglePosition) {
 			this.context.fillText('('+obj.position.x+','+obj.position.y+')', 
 				obj.position.x-10-obj.width*0.5, obj.position.y-5-obj.height*0.5);
@@ -236,7 +238,7 @@ var game = {
 			100, 300);
 		if(this.map.remainingDots == 0) {
 			this.context.fillText('Congratulations, YOU WIN!!', 
-				this.screenWidth*0.5, 110);
+				this.screenWidth*0.3, 110);
 		}
 		this.context.fill();
 	},
@@ -277,28 +279,46 @@ var game = {
 		pacman.position.y = this.map.blockHeight*1.5;
 
 		var img01 = Object.create(SpriteImage);
-		img01.x = 282;
-		img01.y = 2;
-		img01.width = 24;
-		img01.height = 32;
+		// img01.x = 282;
+		// img01.y = 2;
+		// img01.width = 24;
+		// img01.height = 32;
+		img01.x = 3;
+		img01.y = 23;
+		img01.width = 12;
+		img01.height = 13;
 
-		var img02 = Object.create(SpriteImage);
-		img02.x = 282;
-		img02.y = 42;
-		img02.width = 30;
-		img02.height = 32;
+		// var img02 = Object.create(SpriteImage);
+		// img02.x = 282;
+		// img02.y = 42;
+		// img02.width = 30;
+		// img02.height = 32;
 
-		var img03 = Object.create(SpriteImage);
-		img03.x = 282;
-		img03.y = 82;
-		img03.width = 32;
-		img03.height = 32;
+		// var img03 = Object.create(SpriteImage);
+		// img03.x = 282;
+		// img03.y = 82;
+		// img03.width = 32;
+		// img03.height = 32;
 
 		pacman.images.push(img01);
-		pacman.images.push(img02);
-		pacman.images.push(img03);
+		// pacman.images.push(img02);
+		// pacman.images.push(img03);
 
   		this.objects.push(pacman);
+
+  // 		var enemy = Object.create(Sprite);
+		// enemy.position.x = this.map.blockWidth*5.5;
+		// enemy.position.y = this.map.blockHeight*5.5;
+
+  // 		var phantom01 = Object.create(SpriteImage);
+		// phantom01.x = 123;
+		// phantom01.y = 83;
+		// phantom01.width = 14;
+		// phantom01.height = 14;
+
+		// enemy.images.push(phantom01);
+
+		// this.objects.push(enemy);
 	},
 	addEventListerners: function() {
 		console.log('adding event listerners.');

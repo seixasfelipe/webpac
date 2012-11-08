@@ -326,25 +326,26 @@ var game = {
 		window.addEventListener('keydown', function(e) {
 			// ref: http://www.cambiaresearch.com/articles/15/javascript-char-codes-key-codes
 			console.log('key hit ' + String.fromCharCode(e.keyCode).toLowerCase());
-			if(e.keyCode == 81) { // Q
+			e.preventDefault();
+			if(e.keyCode === 81) { // Q
 				game.quit();
-			} else if(e.keyCode == 13) { // ENTER
+			} else if(e.keyCode === 13) { // ENTER
 				game.init();
-			} else if(e.keyCode == 32) { // SPACE
+			} else if(e.keyCode === 32) { // SPACE
 				game.clearCanvas();
-			} else if(e.keyCode == 37) { // LEFT
+			} else if(e.keyCode === 37) { // LEFT
 				game.keydown.left = true;
-			} else if(e.keyCode == 39) { // RIGHT
+			} else if(e.keyCode === 39) { // RIGHT
 				game.keydown.right = true;
-			} else if(e.keyCode == 38) { // UP
+			} else if(e.keyCode === 38) { // UP
 				game.keydown.up = true;
-			} else if(e.keyCode == 40) { // DOWN
+			} else if(e.keyCode === 40) { // DOWN
 				game.keydown.down = true;
-			} else if(String.fromCharCode(e.keyCode) == 'A') {
+			} else if(String.fromCharCode(e.keyCode) === 'A') {
 				game.debug.toggleBounds = !game.debug.toggleBounds;
-			} else if(String.fromCharCode(e.keyCode) == 'S') {
+			} else if(String.fromCharCode(e.keyCode) === 'S') {
 				game.debug.togglePosition = !game.debug.togglePosition;
-			} else if(String.fromCharCode(e.keyCode) == 'D') {
+			} else if(String.fromCharCode(e.keyCode) === 'D') {
 				game.debug.toggleBoundsPosition = !game.debug.toggleBoundsPosition;
 			}
 		}, false);

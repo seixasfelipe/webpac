@@ -7,18 +7,6 @@ var game = {
 	loop: null,
 	spriteSheet: null,
 	objects: [],
-	keydown: {
-		left: false,
-		right: false,
-		up: false,
-		down: false,
-		reset: function() {
-			this.left = false;
-			this.right = false;
-			this.up = false;
-			this.down = false;
-		}
-	},
 	map: null,
 	debug: {
 		toggleBounds: false,
@@ -72,17 +60,14 @@ var game = {
 			console.log('game quit');
 	},
 	update: function() {
-
 		this.updatePlayer(this.player);
 
-		
+		this.updateEnemies(this.objects);
 	},
 	updatePlayer: function(player) {
 		this.handleInput(player);
 		this.updatePosition(player);
 		this.eatDots(player);
-
-		this.updateEnemies(this.objects);
 	},
 	updateEnemies: function(enemies) {
 		for(var i=0; i<enemies.length; i++) {
@@ -90,25 +75,40 @@ var game = {
 		}
 	},
 	handleInput: function(obj) {
+		if(keys['q'] === true) { // Q
+			game.quit();
+			delete keys['q'];
+		} else if(keys['space'] === true) { // SPACE
+			game.clearCanvas();
+			delete keys['space'];
+		} else if(keys['a'] === true) {
+			game.debug.toggleBounds = !game.debug.toggleBounds;
+			delete keys['a'];
+		} else if(keys['s'] === true) {
+			game.debug.togglePosition = !game.debug.togglePosition;
+			delete keys['s'];
+		} else if(keys['d'] === true) {
+			game.debug.toggleBoundsPosition = !game.debug.toggleBoundsPosition;
+			delete keys['d'];
+		}
+
 		var atBlockCenterCoord = this.map.atBlockCenterCoord(obj.position.x, obj.position.y);
 
 		if(atBlockCenterCoord) {
-			// Objects direction
-			if(this.keydown.left) {
-				obj.direction.x = -1;
-				obj.direction.y = 0;
-			} else if(this.keydown.right) {
-				obj.direction.x = 1;
-				obj.direction.y = 0;
-			} else if(this.keydown.up) {
-				obj.direction.x = 0;
-				obj.direction.y = -1;
-			} else if(this.keydown.down) {
-				obj.direction.x = 0;
-				obj.direction.y = 1;
+			if(keys.left) {
+				obj.move(DirectionEnum.LEFT);
+				delete keys.left;
+			} else if (keys.right) {
+				obj.move(DirectionEnum.RIGHT);
+				delete keys.right;
+			} else if (keys.up) {
+				obj.move(DirectionEnum.UP);
+				delete keys.up;
+			} else if (keys.down) {
+				obj.move(DirectionEnum.DOWN);
+				delete keys.down;
 			}
-			this.keydown.reset();
-		}		
+		}
 	},
 	updatePosition: function(obj) {
 		// Collision detection
@@ -367,26 +367,22 @@ var game = {
 			// ref: http://www.cambiaresearch.com/articles/15/javascript-char-codes-key-codes
 			console.log('key hit ' + String.fromCharCode(e.keyCode).toLowerCase());
 			e.preventDefault();
-			if(e.keyCode === 81) { // Q
-				game.quit();
-			} else if(e.keyCode === 13) { // ENTER
+
+			if(e.keyCode == 13) { // ENTER
 				game.init();
-			} else if(e.keyCode === 32) { // SPACE
-				game.clearCanvas();
+			} else if(e.keyCode == 32) { // SPACE
+				keys['space'] = true;
 			} else if(e.keyCode === 37) { // LEFT
-				game.keydown.left = true;
+				keys['left'] = true;
 			} else if(e.keyCode === 39) { // RIGHT
-				game.keydown.right = true;
+				keys['right'] = true;
 			} else if(e.keyCode === 38) { // UP
-				game.keydown.up = true;
+				keys['up'] = true;
 			} else if(e.keyCode === 40) { // DOWN
-				game.keydown.down = true;
-			} else if(String.fromCharCode(e.keyCode) === 'A') {
-				game.debug.toggleBounds = !game.debug.toggleBounds;
-			} else if(String.fromCharCode(e.keyCode) === 'S') {
-				game.debug.togglePosition = !game.debug.togglePosition;
-			} else if(String.fromCharCode(e.keyCode) === 'D') {
-				game.debug.toggleBoundsPosition = !game.debug.toggleBoundsPosition;
+				keys['down'] = true;
+			} else {
+				var keycode = String.fromCharCode(e.keyCode).toLowerCase();
+				keys[keycode] = true;
 			}
 		}, false);
 	}

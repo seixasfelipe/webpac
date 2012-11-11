@@ -44,6 +44,22 @@ var Sprite = {
 
 	getImage: function() {
 		return this.images[this.currentImageIndex];
+	},
+
+	move: function(directionEnum) {
+		if(directionEnum === DirectionEnum.LEFT) {
+			this.direction.x = -1;
+			this.direction.y = 0;
+		} else if(directionEnum === DirectionEnum.RIGHT) {
+			this.direction.x = 1;
+			this.direction.y = 0;
+		} else if(directionEnum === DirectionEnum.UP) {
+			this.direction.x = 0;
+			this.direction.y = -1;
+		} else if(directionEnum === DirectionEnum.DOWN) {
+			this.direction.x = 0;
+			this.direction.y = 1;
+		}
 	}
 };
 

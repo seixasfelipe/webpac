@@ -25,6 +25,7 @@ var game = {
 		togglePosition: false,
 		toggleBoundsPosition: false
 	},
+	player: null,
 
 
 	create: function() {
@@ -72,70 +73,88 @@ var game = {
 	},
 	update: function() {
 
-		for(var i=0; i<this.objects.length; i++) {
-			var obj = this.objects[i];
-			var objBounds = obj.getBounds();
-			var atBlockCenterCoord = this.map.atBlockCenterCoord(obj.position.x, obj.position.y);
+		this.updatePlayer(this.player);
 
-			if(atBlockCenterCoord) {
-				// Objects direction
-				if(this.keydown.left) {
-					obj.direction.x = -1;
-					obj.direction.y = 0;
-				} else if(this.keydown.right) {
-					obj.direction.x = 1;
-					obj.direction.y = 0;
-				} else if(this.keydown.up) {
-					obj.direction.x = 0;
-					obj.direction.y = -1;
-				} else if(this.keydown.down) {
-					obj.direction.x = 0;
-					obj.direction.y = 1;
-				}
-				this.keydown.reset();
+		
+	},
+	updatePlayer: function(player) {
+		this.handleInput(player);
+		this.updatePosition(player);
+		this.eatDots(player);
+
+		this.updateEnemies(this.objects);
+	},
+	updateEnemies: function(enemies) {
+		for(var i=0; i<enemies.length; i++) {
+			this.updatePosition(enemies[i]);
+		}
+	},
+	handleInput: function(obj) {
+		var atBlockCenterCoord = this.map.atBlockCenterCoord(obj.position.x, obj.position.y);
+
+		if(atBlockCenterCoord) {
+			// Objects direction
+			if(this.keydown.left) {
+				obj.direction.x = -1;
+				obj.direction.y = 0;
+			} else if(this.keydown.right) {
+				obj.direction.x = 1;
+				obj.direction.y = 0;
+			} else if(this.keydown.up) {
+				obj.direction.x = 0;
+				obj.direction.y = -1;
+			} else if(this.keydown.down) {
+				obj.direction.x = 0;
+				obj.direction.y = 1;
 			}
-
-			// Collision detection
-			var mapPosition = this.map.getMapPosition(obj.position.x, obj.position.y);
-			if(obj.direction.x == -1) {
-				if(this.map.getBlockTypeByRowCol(mapPosition.row, mapPosition.col - 1) != 3) {
+			this.keydown.reset();
+		}		
+	},
+	updatePosition: function(obj) {
+		// Collision detection
+		var mapPosition = this.map.getMapPosition(obj.position.x, obj.position.y);
+		if(obj.direction.x == -1) {
+			if(this.map.getBlockTypeByRowCol(mapPosition.row, mapPosition.col - 1) != 3) {
+				obj.position.x += (obj.direction.x * obj.speed);
+			} else {
+				if (this.map.getCoordenate(mapPosition.row, mapPosition.col).x < obj.position.x) {
 					obj.position.x += (obj.direction.x * obj.speed);
-				} else {
-					if (this.map.getCoordenate(mapPosition.row, mapPosition.col).x < obj.position.x) {
-						obj.position.x += (obj.direction.x * obj.speed);
-					}
 				}
-			} else if(obj.direction.x == 1) {
-				if(this.map.getBlockTypeByRowCol(mapPosition.row, mapPosition.col + 1) != 3) {
+			}
+		} else if(obj.direction.x == 1) {
+			if(this.map.getBlockTypeByRowCol(mapPosition.row, mapPosition.col + 1) != 3) {
+				obj.position.x += (obj.direction.x * obj.speed);
+			} else {
+				if (this.map.getCoordenate(mapPosition.row, mapPosition.col).x > obj.position.x) {
 					obj.position.x += (obj.direction.x * obj.speed);
-				} else {
-					if (this.map.getCoordenate(mapPosition.row, mapPosition.col).x > obj.position.x) {
-						obj.position.x += (obj.direction.x * obj.speed);
-					}
-				}
-			} else if(obj.direction.y == -1) {
-				if(this.map.getBlockTypeByRowCol(mapPosition.row - 1, mapPosition.col) != 3) {
-					obj.position.y += (obj.direction.y * obj.speed);
-				} else {
-					if (this.map.getCoordenate(mapPosition.row, mapPosition.col).y < obj.position.y) {
-						obj.position.y += (obj.direction.y * obj.speed);
-					}
-				}
-			} else if(obj.direction.y == 1) {
-				if(this.map.getBlockTypeByRowCol(mapPosition.row + 1, mapPosition.col) != 3) {
-					obj.position.y += (obj.direction.y * obj.speed);
-				} else {
-					if (this.map.getCoordenate(mapPosition.row, mapPosition.col).y > obj.position.y) {
-						obj.position.y += (obj.direction.y * obj.speed);
-					}
 				}
 			}
+		} else if(obj.direction.y == -1) {
+			if(this.map.getBlockTypeByRowCol(mapPosition.row - 1, mapPosition.col) != 3) {
+				obj.position.y += (obj.direction.y * obj.speed);
+			} else {
+				if (this.map.getCoordenate(mapPosition.row, mapPosition.col).y < obj.position.y) {
+					obj.position.y += (obj.direction.y * obj.speed);
+				}
+			}
+		} else if(obj.direction.y == 1) {
+			if(this.map.getBlockTypeByRowCol(mapPosition.row + 1, mapPosition.col) != 3) {
+				obj.position.y += (obj.direction.y * obj.speed);
+			} else {
+				if (this.map.getCoordenate(mapPosition.row, mapPosition.col).y > obj.position.y) {
+					obj.position.y += (obj.direction.y * obj.speed);
+				}
+			}
+		}
+	},
+	eatDots: function(obj) {
+		var atBlockCenterCoord = this.map.atBlockCenterCoord(obj.position.x, obj.position.y);
+		var mapPosition = this.map.getMapPosition(obj.position.x, obj.position.y);
 
-			// Eat Dots
-			if(atBlockCenterCoord && this.map.getBlockTypeByRowCol(mapPosition.row, mapPosition.col) == 1) {
-				this.map.changeBlockType(0, mapPosition.row, mapPosition.col);
-				--this.map.remainingDots;
-			}
+		// Eat Dots
+		if(atBlockCenterCoord && this.map.getBlockTypeByRowCol(mapPosition.row, mapPosition.col) == 1) {
+			this.map.changeBlockType(0, mapPosition.row, mapPosition.col);
+			--this.map.remainingDots;
 		}
 	},
 	draw: function() {
@@ -146,39 +165,41 @@ var game = {
   		this.drawMap();
   		this.drawStatus();
 
+  		this.drawObject(this.player);
+
   		for(var i=0; i<this.objects.length; i++) {
-  			var obj = this.objects[i];
-
-			this.drawDebugInfo(obj);
-
-  			this.context.translate(obj.position.x, obj.position.y);
-
-  			var scaleFactor = 1;
-  			if(obj.direction.x != 0) {
-  				this.context.scale(obj.direction.x*scaleFactor,scaleFactor);
-  			} else {
-  				this.context.scale(scaleFactor,scaleFactor);
-  			}
-
-  			// WTF?? Angle 1.60!?!? I got it trying and fixing!
-  			if(obj.direction.y > 0) {
-  				this.context.rotate(1.60);
-  			} else if(obj.direction.y < 0) {
-  				this.context.rotate(-1.60);
-  			}
-  			
-  			var objImage = obj.getImage();
-  			var objImgHalfWidth = objImage.width*0.5;
-			var objImgHalfHeight = objImage.height*0.5;
-  			this.context.drawImage(this.spriteSheet, 
-  				objImage.x, objImage.y, objImage.width, objImage.height, 
-  				-objImgHalfWidth, -objImgHalfHeight, objImage.width, objImage.height);
-
-  			this.context.setTransform(1,0,0,1,0,0);
-
+  			this.drawObject(this.objects[i]);
   		}
 
   		this.context.restore();
+	},
+	drawObject: function(obj) {
+		this.drawDebugInfo(obj);
+
+		this.context.translate(obj.position.x, obj.position.y);
+
+		var scaleFactor = 1;
+		if(obj.direction.x != 0) {
+			this.context.scale(obj.direction.x*scaleFactor,scaleFactor);
+		} else {
+			this.context.scale(scaleFactor,scaleFactor);
+		}
+
+		// WTF?? Angle 1.60!?!? I got it trying and fixing!
+		if(obj.direction.y > 0) {
+			this.context.rotate(1.60);
+		} else if(obj.direction.y < 0) {
+			this.context.rotate(-1.60);
+		}
+		
+		var objImage = obj.getImage();
+		var objImgHalfWidth = objImage.width*0.5;
+		var objImgHalfHeight = objImage.height*0.5;
+		this.context.drawImage(this.spriteSheet, 
+			objImage.x, objImage.y, objImage.width, objImage.height, 
+			-objImgHalfWidth, -objImgHalfHeight, objImage.width, objImage.height);
+
+		this.context.setTransform(1,0,0,1,0,0);
 	},
 	drawMap: function() {
   		var initialX = 0;
@@ -244,13 +265,6 @@ var game = {
 	},
 	clearCanvas: function() {
 		this.context.clearRect(0, 0, this.screenWidth, this.screenHeight);
-		
-		// Reset Transform
-      	// 1 0 0
-      	// 0 1 0
-      	// 0 0 1
-		//this.context.setTransform(1,0,0,1,0,0);
-		//this.canvas.width = this.canvas.width;
 	},
 	loadResources: function() {
 		console.log('loading resources.');
@@ -281,6 +295,12 @@ var game = {
 					y: this.map.blockHeight*1.5
 				}
 			},
+			direction: {
+				value: {
+					x: 1,
+					y: 0
+				}
+			},
 			images: {
 				value: [
 					{
@@ -296,14 +316,10 @@ var game = {
 		console.log('PacMan Object created:');
 		console.log(pacman);
 
-
-  		this.objects.push(pacman);
-
+  		this.player = pacman;
 
 
 
-  		console.log('Game Objects array:');
-  		console.log(this.objects);
 
 
 
@@ -314,6 +330,12 @@ var game = {
 				value: {
 					x: this.map.blockWidth*1.5,
 					y: this.map.blockHeight*5.5
+				}
+			},
+			direction: {
+				value: {
+					x: 1,
+					y: 0
 				}
 			},
 			images: {

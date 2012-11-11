@@ -48,4 +48,4 @@ var Map = {
 		}
 		return remainingDots;
 	}
-}
+};

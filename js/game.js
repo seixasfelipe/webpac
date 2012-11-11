@@ -6,7 +6,7 @@ var game = {
 	screenHeight: 480,
 	loop: null,
 	spriteSheet: null,
-	objects: new Array(),
+	objects: [],
 	keydown: {
 		left: false,
 		right: false,
@@ -174,7 +174,7 @@ var game = {
   				objImage.x, objImage.y, objImage.width, objImage.height, 
   				-objImgHalfWidth, -objImgHalfHeight, objImage.width, objImage.height);
 
-  			// this.context.setTransform(1,0,0,1,0,0);
+  			this.context.setTransform(1,0,0,1,0,0);
 
   		}
 
@@ -274,51 +274,69 @@ var game = {
 		]);
 
 		// TODO: create a resource factory.
-		var pacman = Object.create(Sprite);
-		pacman.position.x = this.map.blockWidth*1.5;
-		pacman.position.y = this.map.blockHeight*1.5;
+		var pacman = Object.create(Sprite, {
+			position: {
+				value: {
+					x: this.map.blockWidth*1.5,
+					y: this.map.blockHeight*1.5
+				}
+			},
+			images: {
+				value: [
+					{
+						x: 3,
+						y: 23,
+						width: 12,
+						height: 13
+					}
+				]
+			}
+		});
 
-		var img01 = Object.create(SpriteImage);
-		// img01.x = 282;
-		// img01.y = 2;
-		// img01.width = 24;
-		// img01.height = 32;
-		img01.x = 3;
-		img01.y = 23;
-		img01.width = 12;
-		img01.height = 13;
+		console.log('PacMan Object created:');
+		console.log(pacman);
 
-		// var img02 = Object.create(SpriteImage);
-		// img02.x = 282;
-		// img02.y = 42;
-		// img02.width = 30;
-		// img02.height = 32;
-
-		// var img03 = Object.create(SpriteImage);
-		// img03.x = 282;
-		// img03.y = 82;
-		// img03.width = 32;
-		// img03.height = 32;
-
-		pacman.images.push(img01);
-		// pacman.images.push(img02);
-		// pacman.images.push(img03);
 
   		this.objects.push(pacman);
 
-  // 		var enemy = Object.create(Sprite);
-		// enemy.position.x = this.map.blockWidth*5.5;
-		// enemy.position.y = this.map.blockHeight*5.5;
 
-  // 		var phantom01 = Object.create(SpriteImage);
-		// phantom01.x = 123;
-		// phantom01.y = 83;
-		// phantom01.width = 14;
-		// phantom01.height = 14;
 
-		// enemy.images.push(phantom01);
 
-		// this.objects.push(enemy);
+  		console.log('Game Objects array:');
+  		console.log(this.objects);
+
+
+
+
+
+  		var enemy = Object.create(Sprite, {
+  			position: {
+				value: {
+					x: this.map.blockWidth*1.5,
+					y: this.map.blockHeight*5.5
+				}
+			},
+			images: {
+				value: [
+					{
+						x: 123,
+						y: 83,
+						width: 14,
+						height: 14
+					}
+				]
+			}
+  		});
+
+		console.log('Enemy Object created:');
+		console.log(enemy);
+
+
+
+		this.objects.push(enemy);
+
+		console.log('Game Objects array:');
+  		console.log(this.objects);
 	},
 	addEventListerners: function() {
 		console.log('adding event listerners.');
@@ -350,5 +368,4 @@ var game = {
 			}
 		}, false);
 	}
-}
-
+};

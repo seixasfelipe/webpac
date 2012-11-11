@@ -40,7 +40,7 @@ var Sprite = {
 	},
 
 	currentImageIndex: 0,
-	images: new Array(),
+	images: [],
 
 	getImage: function() {
 		return this.images[this.currentImageIndex];
@@ -52,4 +52,4 @@ var SpriteImage = {
 	y: 0,
 	width: 0,
 	height: 0
-}
+};

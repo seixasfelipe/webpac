@@ -76,19 +76,19 @@ var game = {
 	},
 	handleInput: function(obj) {
 		if(keys['q'] === true) { // Q
-			game.quit();
+			this.quit();
 			delete keys['q'];
 		} else if(keys['space'] === true) { // SPACE
-			game.clearCanvas();
+			this.clearCanvas();
 			delete keys['space'];
 		} else if(keys['a'] === true) {
-			game.debug.toggleBounds = !game.debug.toggleBounds;
+			this.debug.toggleBounds = !this.debug.toggleBounds;
 			delete keys['a'];
 		} else if(keys['s'] === true) {
-			game.debug.togglePosition = !game.debug.togglePosition;
+			this.debug.togglePosition = !this.debug.togglePosition;
 			delete keys['s'];
 		} else if(keys['d'] === true) {
-			game.debug.toggleBoundsPosition = !game.debug.toggleBoundsPosition;
+			this.debug.toggleBoundsPosition = !this.debug.toggleBoundsPosition;
 			delete keys['d'];
 		}
 

@@ -46,7 +46,7 @@ var Sprite = {
 		return this.images[this.currentImageIndex];
 	},
 
-	move: function(directionEnum) {
+	directionTo: function(directionEnum) {
 		if(directionEnum === DirectionEnum.LEFT) {
 			this.direction.x = -1;
 			this.direction.y = 0;
@@ -62,6 +62,10 @@ var Sprite = {
 		}
 
 		this.direction.directionEnum = directionEnum;
+	},
+	move: function() {
+		this.position.x += (this.direction.x * this.speed);
+		this.position.y += (this.direction.y * this.speed);
 	}
 };
 

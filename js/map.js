@@ -47,5 +47,14 @@ var Map = {
 				remainingDots++;
 		}
 		return remainingDots;
+	},
+	getAdjacentBlock: function(position, direction) {
+		var mapPosition = this.getMapPosition(position);
+		return this.getBlockTypeByRowCol(mapPosition.row + direction.y, mapPosition.col + direction.x);
+	},
+	canMove: function(position, direction) {
+		var adjacentBlock = this.getAdjacentBlock(position, direction)
+		return ( ( adjacentBlock !== BlockTypeEnum.WALL ) || 
+			( adjacentBlock === BlockTypeEnum.WALL && !this.atBlockCenterCoord(position) ));
 	}
 };

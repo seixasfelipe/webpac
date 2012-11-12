@@ -60,21 +60,28 @@ var game = {
 			console.log('game quit');
 	},
 	update: function() {
-		this.updatePlayer(this.player);
-
-		this.updateEnemies(this.objects);
+		this.handleInput();
+		this.updatePlayerPosition(this.player);
+		this.updateEnemiesPosition(this.objects);
+		// this.checkCollisions();
+		// this.handleCollisions();
+		this.eatDots(this.player);
 	},
-	updatePlayer: function(player) {
-		this.handleInput(player);
-		this.collisionDetect(player);
-		this.eatDots(player);
+	updatePlayerPosition: function(player) {
+		this.updateSpritePosition(player);
 	},
-	updateEnemies: function(enemies) {
-		for(var i=0; i<enemies.length; i++) {
-			this.collisionDetect(enemies[i]);
+	updateEnemiesPosition: function(enemies) {
+		var i;
+		for(i=0; i<enemies.length; i += 1) {
+			this.updateSpritePosition(enemies[i]);
 		}
 	},
-	handleInput: function(obj) {
+	updateSpritePosition: function(sprite) {
+		if( this.map.canMove(sprite.position, sprite.direction) ) {
+			sprite.move();	
+		}
+	},
+	handleInput: function() {
 		if(keys['q'] === true) { // Q
 			this.quit();
 			delete keys['q'];
@@ -92,57 +99,21 @@ var game = {
 			delete keys['d'];
 		}
 
-		var atBlockCenterCoord = this.map.atBlockCenterCoord(obj.position);
+		var atBlockCenterCoord = this.map.atBlockCenterCoord(this.player.position);
 
 		if(atBlockCenterCoord) {
 			if(keys.left) {
-				obj.move(DirectionEnum.LEFT);
+				this.player.directionTo(DirectionEnum.LEFT);
 				delete keys.left;
 			} else if (keys.right) {
-				obj.move(DirectionEnum.RIGHT);
+				this.player.directionTo(DirectionEnum.RIGHT);
 				delete keys.right;
 			} else if (keys.up) {
-				obj.move(DirectionEnum.UP);
+				this.player.directionTo(DirectionEnum.UP);
 				delete keys.up;
 			} else if (keys.down) {
-				obj.move(DirectionEnum.DOWN);
+				this.player.directionTo(DirectionEnum.DOWN);
 				delete keys.down;
-			}
-		}
-	},
-	collisionDetect: function(obj) {
-		var mapPosition = this.map.getMapPosition(obj.position);
-		if(obj.direction.x == -1) {
-			if(this.map.getBlockTypeByRowCol(mapPosition.row, mapPosition.col - 1) != 3) {
-				obj.position.x += (obj.direction.x * obj.speed);
-			} else {
-				if (this.map.getCoordenate(mapPosition.row, mapPosition.col).x < obj.position.x) {
-					obj.position.x += (obj.direction.x * obj.speed);
-				}
-			}
-		} else if(obj.direction.x == 1) {
-			if(this.map.getBlockTypeByRowCol(mapPosition.row, mapPosition.col + 1) != 3) {
-				obj.position.x += (obj.direction.x * obj.speed);
-			} else {
-				if (this.map.getCoordenate(mapPosition.row, mapPosition.col).x > obj.position.x) {
-					obj.position.x += (obj.direction.x * obj.speed);
-				}
-			}
-		} else if(obj.direction.y == -1) {
-			if(this.map.getBlockTypeByRowCol(mapPosition.row - 1, mapPosition.col) != 3) {
-				obj.position.y += (obj.direction.y * obj.speed);
-			} else {
-				if (this.map.getCoordenate(mapPosition.row, mapPosition.col).y < obj.position.y) {
-					obj.position.y += (obj.direction.y * obj.speed);
-				}
-			}
-		} else if(obj.direction.y == 1) {
-			if(this.map.getBlockTypeByRowCol(mapPosition.row + 1, mapPosition.col) != 3) {
-				obj.position.y += (obj.direction.y * obj.speed);
-			} else {
-				if (this.map.getCoordenate(mapPosition.row, mapPosition.col).y > obj.position.y) {
-					obj.position.y += (obj.direction.y * obj.speed);
-				}
 			}
 		}
 	},

@@ -60,6 +60,8 @@ var Sprite = {
 			this.direction.x = 0;
 			this.direction.y = 1;
 		}
+
+		this.direction.directionEnum = directionEnum;
 	}
 };
 

@@ -3,21 +3,21 @@ var Map = {
 	maxCols: 26,
 	blockWidth: 24,
 	blockHeight: 24,
-	matrix: new Array(),
+	matrix: [],
 	remainingDots: 0,
 
 	init: function(matrix) {
 		this.matrix = matrix;
 		this.remainingDots = this.getRemainingDots();
 	},
-	getMapPosition: function(positionX, positionY) {
+	getMapPosition: function(position) {
 		return {
-			row: Math.floor(positionY/this.blockHeight),
-			col: Math.floor(positionX/this.blockWidth)			
+			row: Math.floor(position.y/this.blockHeight),
+			col: Math.floor(position.x/this.blockWidth)			
 		}
 	},
-	getBlockType: function(positionX, positionY) {
-		var mapPosition = this.getMapPosition(positionX, positionY);
+	getBlockType: function(position) {
+		var mapPosition = this.getMapPosition(position);
 		return this.matrix[ (mapPosition.row*this.maxCols) + mapPosition.col];
 	},
 	getBlockTypeByRowCol: function(row, col) {
@@ -29,13 +29,13 @@ var Map = {
 			y: row*this.blockWidth + (this.blockHeight*0.5)
 		}
 	},
-	getCenterPosition: function(positionX, positionY) {
-		var mapPosition = this.getMapPosition(positionX, positionY);
+	getCenterPosition: function(position) {
+		var mapPosition = this.getMapPosition(position);
 		return this.getCoordenate(mapPosition.row, mapPosition.col);
 	},
-	atBlockCenterCoord: function(positionX, positionY) {
-		var centerPosition = this.getCenterPosition(positionX, positionY);
-		return (centerPosition.x == positionX && centerPosition.y == positionY);
+	atBlockCenterCoord: function(position) {
+		var centerPosition = this.getCenterPosition(position);
+		return (centerPosition.x === position.x && centerPosition.y === position.y);
 	},
 	changeBlockType: function(blockType, row, col) {
 		this.matrix[ row*this.maxCols + col ] = blockType;

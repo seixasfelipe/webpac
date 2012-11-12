@@ -66,12 +66,12 @@ var game = {
 	},
 	updatePlayer: function(player) {
 		this.handleInput(player);
-		this.updatePosition(player);
+		this.collisionDetect(player);
 		this.eatDots(player);
 	},
 	updateEnemies: function(enemies) {
 		for(var i=0; i<enemies.length; i++) {
-			this.updatePosition(enemies[i]);
+			this.collisionDetect(enemies[i]);
 		}
 	},
 	handleInput: function(obj) {
@@ -92,7 +92,7 @@ var game = {
 			delete keys['d'];
 		}
 
-		var atBlockCenterCoord = this.map.atBlockCenterCoord(obj.position.x, obj.position.y);
+		var atBlockCenterCoord = this.map.atBlockCenterCoord(obj.position);
 
 		if(atBlockCenterCoord) {
 			if(keys.left) {
@@ -110,9 +110,8 @@ var game = {
 			}
 		}
 	},
-	updatePosition: function(obj) {
-		// Collision detection
-		var mapPosition = this.map.getMapPosition(obj.position.x, obj.position.y);
+	collisionDetect: function(obj) {
+		var mapPosition = this.map.getMapPosition(obj.position);
 		if(obj.direction.x == -1) {
 			if(this.map.getBlockTypeByRowCol(mapPosition.row, mapPosition.col - 1) != 3) {
 				obj.position.x += (obj.direction.x * obj.speed);
@@ -148,8 +147,8 @@ var game = {
 		}
 	},
 	eatDots: function(obj) {
-		var atBlockCenterCoord = this.map.atBlockCenterCoord(obj.position.x, obj.position.y);
-		var mapPosition = this.map.getMapPosition(obj.position.x, obj.position.y);
+		var atBlockCenterCoord = this.map.atBlockCenterCoord(obj.position);
+		var mapPosition = this.map.getMapPosition(obj.position);
 
 		// Eat Dots
 		if(atBlockCenterCoord && this.map.getBlockTypeByRowCol(mapPosition.row, mapPosition.col) == 1) {
@@ -217,7 +216,7 @@ var game = {
 	  				this.context.rect(currentX, currentY, this.map.blockWidth, this.map.blockHeight);
 	  				this.context.stroke();
   				} else if(blockType == 1) {
-  					var centerPosition = this.map.getCenterPosition(currentX, currentY);
+  					var centerPosition = this.map.getCenterPosition({ x: currentX, y: currentY });
   					this.context.beginPath();
   					this.context.rect(centerPosition.x-1, centerPosition.y-1, 3, 3);
   					this.context.fill();
@@ -233,7 +232,7 @@ var game = {
 			this.context.fillText('('+obj.position.x+','+obj.position.y+')', 
 				obj.position.x-10-obj.width*0.5, obj.position.y-5-obj.height*0.5);
 
-			var currentMapPosition = this.map.getMapPosition(obj.position.x, obj.position.y);
+			var currentMapPosition = this.map.getMapPosition(obj.position);
 			this.context.fillText('('+currentMapPosition.col+'x'+currentMapPosition.row+')',
 				obj.position.x-10-obj.width*0.5, obj.position.y+10+obj.height*0.5);
 			this.context.fillText('('+this.map.getCoordenate(currentMapPosition.row, currentMapPosition.col).x+'x'+this.map.getCoordenate(currentMapPosition.row, currentMapPosition.col).y+')',

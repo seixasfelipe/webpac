@@ -122,8 +122,8 @@ var game = {
 		var mapPosition = this.map.getMapPosition(obj.position);
 
 		// Eat Dots
-		if(atBlockCenterCoord && this.map.getBlockTypeByRowCol(mapPosition.row, mapPosition.col) == 1) {
-			this.map.changeBlockType(0, mapPosition.row, mapPosition.col);
+		if(atBlockCenterCoord && this.map.getBlockTypeByRowCol(mapPosition.row, mapPosition.col) === BlockTypeEnum.DOT) {
+			this.map.changeBlockType(BlockTypeEnum.EMPTY, mapPosition.row, mapPosition.col);
 			--this.map.remainingDots;
 		}
 	},
@@ -149,17 +149,18 @@ var game = {
 		this.context.translate(obj.position.x, obj.position.y);
 
 		var scaleFactor = 1;
-		if(obj.direction.x != 0) {
+		if( obj.direction.directionEnum === DirectionEnum.LEFT || 
+			obj.direction.directionEnum === DirectionEnum.RIGHT ) {
 			this.context.scale(obj.direction.x*scaleFactor,scaleFactor);
 		} else {
 			this.context.scale(scaleFactor,scaleFactor);
-		}
 
-		// WTF?? Angle 1.60!?!? I got it trying and fixing!
-		if(obj.direction.y > 0) {
-			this.context.rotate(1.60);
-		} else if(obj.direction.y < 0) {
-			this.context.rotate(-1.60);
+			// WTF?? Angle 1.60!?!? I got it trying and fixing!
+			if(obj.direction.directionEnum === DirectionEnum.DOWN) {
+				this.context.rotate(1.60);
+			} else if(obj.direction.directionEnum === DirectionEnum.UP) {
+				this.context.rotate(-1.60);
+			}
 		}
 		
 		var objImage = obj.getImage();
@@ -268,7 +269,8 @@ var game = {
 			direction: {
 				value: {
 					x: 1,
-					y: 0
+					y: 0,
+					directionEnum: DirectionEnum.RIGHT
 				}
 			},
 			images: {
@@ -305,7 +307,8 @@ var game = {
 			direction: {
 				value: {
 					x: 1,
-					y: 0
+					y: 0,
+					directionEnum: DirectionEnum.RIGHT
 				}
 			},
 			images: {
